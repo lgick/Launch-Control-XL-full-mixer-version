@@ -28,7 +28,8 @@ class BiLedColors:
         TrackSelected = Color(62)
         TrackUnselected = Color(29)
         NoTrack = Color(0)
-        Sends = Color(47)
+        Sends = Color(62)
+        VolumeSends = Color(60)
         Pans = Color(60)
 
     class Device:

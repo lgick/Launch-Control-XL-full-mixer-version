@@ -12,13 +12,15 @@ from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):
     send_lights = control_list(ButtonControl, control_count=2, color='Mixer.Sends', disabled_color='Mixer.NoTrack')
+    #send_lights = ButtonControl(color='Mixer.Sends', disabled_color='Mixer.NoTrack')
     pan_light = ButtonControl(color='Mixer.Pans', disabled_color='Mixer.NoTrack')
 
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
         self.pan_light.enabled = bool(track)
-        for light in self.send_lights:
-            light.enabled = bool(track)
+        self.send_lights.enabled = bool(track)
+        #for light in self.send_lights:
+        #    light.enabled = bool(track)
 
 
 class MixerComponent(MixerComponentBase):
@@ -38,7 +40,8 @@ class MixerComponent(MixerComponentBase):
             if self.send_index is None:
                 channel_strip.set_send_controls([None])
             else:
-                send_controls = [ controls.get_button(index, i) for i in xrange(2) ] if controls else [None]
+                send_controls = [ controls.get_button(index, i) for i in xrange(1) ] if controls else [None]
+                #send_controls = [ controls.get_button(index, i) for i in xrange(2) ] if controls else [None]
                 skipped_sends = [ None for _ in xrange(self.send_index) ]
                 channel_strip.set_send_controls(skipped_sends + send_controls)
 
@@ -49,7 +52,8 @@ class MixerComponent(MixerComponentBase):
             elements = None
             if lights is not None:
                 lights.reset()
-                elements = None if self.send_index is None else [ lights.get_button(index, i) for i in xrange(2) ]
+                elements = None if self.send_index is None else [ lights.get_button(index, i) for i in xrange(1) ]
+                #elements = None if self.send_index is None else [ lights.get_button(index, i) for i in xrange(2) ]
             channel_strip.send_lights.set_control_element(elements)
 
         return
