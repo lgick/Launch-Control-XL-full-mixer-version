@@ -71,18 +71,25 @@ class LaunchControlXL(IdentifiableControlSurface):
         def make_slider(identifier, name):
             return SliderElement(MIDI_CC_TYPE, LIVE_CHANNEL, identifier, name=name)
 
+        # device mode
+        #self._device_mode_button = make_button(105, 'Device_Mode', MIDI_NOTE_TYPE)
+        # solo/mute mode
+        self._mute_mode_button = make_button(106, 'Mute_Mode', MIDI_NOTE_TYPE)
+        # send mode
+        self._solo_mode_button = make_button(107, 'Solo_Mode', MIDI_NOTE_TYPE)
+        # crossfader mode
+        self._arm_mode_button = make_button(108, 'Arm_Mode', MIDI_NOTE_TYPE)
+
+        #self._up_button = make_button(104, 'Up')
+        #self._down_button = make_button(105, 'Down')
+        #self._left_button = make_button(106, 'Stop')
+        #self._right_button = make_button(107, 'Play')
+
         #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Top_Send_%d' % (i + 1)) for i in xrange(8) ], [ make_encoder(29 + i, 'Bottom_Send_%d' % (i + 1)) for i in xrange(8) ]])
         #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Send_%d' % (i + 1)) for i in xrange(6) ]])
         #self._pan_device_encoders = ButtonMatrixElement(rows=[[ make_encoder(49 + i, 'Pan_Device_%d' % (i + 1)) for i in xrange(8) ]])
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
         #self._pan_device_mode_button = make_button(105, 'Pan_Device_Mode', MIDI_NOTE_TYPE)
-        self._mute_mode_button = make_button(106, 'Mute_Mode', MIDI_NOTE_TYPE)
-        self._solo_mode_button = make_button(107, 'Solo_Mode', MIDI_NOTE_TYPE)
-        self._arm_mode_button = make_button(108, 'Arm_Mode', MIDI_NOTE_TYPE)
-        #self._up_button = make_button(104, 'Up')
-        #self._down_button = make_button(105, 'Down')
-        self._left_button = make_button(106, 'Track_Left')
-        self._right_button = make_button(107, 'Track_Right')
         self._select_buttons = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])
         self._state_buttons = ButtonMatrixElement(rows=[
@@ -94,9 +101,9 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._send_encoder_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          13, 29, 14, 30, 15, 31, 109, 125], 'Send_Encoder_Light_%d')])
+          13, 29, 14, 30, 15, 31], 'Send_Encoder_Light_%d')])
 
-        self._send_volume_light = ButtonMatrixElement(rows=[
+        self._send_volume_lights = ButtonMatrixElement(rows=[
          make_button_list([
           45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
 
@@ -112,13 +119,18 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_mixer(self):
         mixer = MixerComponent(MIXER_NUM_TRACKS, is_enabled=True, auto_name=True)
-        mixer.layer = Layer(send_lights=self._send_encoder_lights)
+
+        #mixer.layer = Layer(send_lights=self._send_encoder_lights)
+        mixer.layer = Layer(send_lights=self._send_encoder_lights, send_volume_lights=self._send_volume_lights)
+
         #mixer.layer = Layer(track_select_buttons=self._select_buttons, send_controls=self._send_encoders, next_sends_button=self._down_button, prev_sends_button=self._up_button, pan_controls=self._pan_device_encoders, volume_controls=self._volume_faders, send_lights=self._send_encoder_lights, pan_lights=self._pan_device_encoder_lights)
         #mixer.on_send_index_changed = partial(self._show_controlled_sends_message, mixer)
         #for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
         #    channel_strip.empty_color = 'Mixer.NoTrack'
 
         mixer_modes = ModesComponent()
+        #mixer_modes.add_mode('device', [
+        # AddLayerMode(mixer, Layer(device_buttons=self._state_buttons))])
         mixer_modes.add_mode('mute', [
          AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons))])
         mixer_modes.add_mode('solo', [
@@ -126,6 +138,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer_modes.add_mode('arm', [
          AddLayerMode(mixer, Layer(arm_buttons=self._state_buttons))])
         mixer_modes.layer = Layer(mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, arm_button=self._arm_mode_button)
+        #mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, arm_button=self._arm_mode_button)
         mixer_modes.selected_mode = 'mute'
         return mixer
 

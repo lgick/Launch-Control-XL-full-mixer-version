@@ -27,10 +27,21 @@ class BiLedColors:
         ArmUnselected = Color(13)
         TrackSelected = Color(62)
         TrackUnselected = Color(29)
+        Pans = Color(60)
+
+        Up = Color(60)
+        Down = Color(60)
+        Stop = Color(60)
+        Play = Color(60)
+
+        ResetDevice = Color(15)
+        SwitchDevice = Color(15)
+        PrevDevice = Color(15)
+        NextDevice = Color(15)
+
         NoTrack = Color(0)
         Sends = Color(62)
         VolumeSends = Color(60)
-        Pans = Color(60)
 
     class Device:
         Parameters = Color(13)
