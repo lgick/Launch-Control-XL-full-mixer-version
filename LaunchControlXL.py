@@ -26,6 +26,7 @@ from .SkinDefault import make_biled_skin, make_default_skin
 
 MIXER_NUM_TRACKS = 6
 NUM_TRACKS = 8
+NUM_SCENES = 1
 LIVE_CHANNEL = 8
 PREFIX_TEMPLATE_SYSEX = (240, 0, 32, 41, 2, 17, 119)
 LIVE_TEMPLATE_SYSEX = PREFIX_TEMPLATE_SYSEX + (LIVE_CHANNEL, 247)
@@ -49,10 +50,11 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._disconnect_and_unregister_all_components()
         with self.component_guard():
             mixer = self._create_mixer()
-            #session = self._create_session()
-            device = self._create_device()
-            #session.set_mixer(mixer)
-            self.set_device_component(device)
+            session = self._create_session()
+            #device = self._create_device()
+            session.set_mixer(mixer)
+            #self.set_device_component(device)
+        self.set_highlighting_session_component(session)
 
     def _create_controls(self):
 
@@ -150,6 +152,38 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, arm_button=self._arm_mode_button)
         mixer_modes.selected_mode = 'mute'
         return mixer
+
+    def _create_session(self):
+        session = SessionComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=True, auto_name=True, enable_skinning=True)
+        #stop_all_clips_button=self._left_button
+        #track_bank_left_button=when_bank_off(self._left_button)
+        #track_bank_right_button=when_bank_off(self._right_button)
+        #scene_bank_up_button=when_bank_off(self._up_button)
+        #scene_bank_down_button=when_bank_off(self._down_button)
+        #page_left_button=when_bank_on(self._left_button)
+        #page_right_button=when_bank_on(self._right_button)
+        #page_up_button=when_bank_on(self._up_button)
+        #page_down_button=when_bank_on(self._down_button)
+        #stop_track_clip_buttons=self._stop_buttons
+        #stop_all_clips_button=self._stop_all_button
+        #scene_launch_buttons=self._scene_launch_buttons
+        #clip_launch_buttons=self._session_matrix
+        session.layer = Layer(stop_all_clips_button=self._left_button, scene_launch_buttons=ButtonMatrixElement(rows=[[self._right_button]]), scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
+        self._on_session_offset_changed.subject = session
+        return session
+
+    @subject_slot('offset')
+    def _on_session_offset_changed(self):
+        session = self._on_session_offset_changed.subject
+        self._show_controlled_tracks_message(session)
+
+    def _show_controlled_tracks_message(self, session):
+        start = session.track_offset() + 1
+        end = min(start + 8, len(session.tracks_to_use()))
+        if start < end:
+            self.show_message('Controlling Track %d to %d' % (start, end))
+        else:
+            self.show_message('Controlling Track %d' % start)
 
     def _create_sends(self):
         mixer = MixerComponent(MIXER_NUM_TRACKS, is_enabled=True, auto_name=True)
