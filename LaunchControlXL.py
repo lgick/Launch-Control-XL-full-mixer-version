@@ -93,7 +93,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         # solo/mute mode
         self._mute_mode_button = make_button(106, 'Mute_Mode', MIDI_NOTE_TYPE)
         # send mode
-        self._solo_mode_button = make_button(107, 'Solo_Mode', MIDI_NOTE_TYPE)
+        self._send_mode_button = make_button(107, 'Send_Mode', MIDI_NOTE_TYPE)
         # crossfader mode
         self._crossfader_mode_button = make_button(108, 'Crossfader_Mode', MIDI_NOTE_TYPE)
 
@@ -127,6 +127,8 @@ class LaunchControlXL(IdentifiableControlSurface):
          make_button_list(chain(xrange(73, 77), xrange(89, 91)), 'Track_State_%d')])
         self._state_buttons4 = ButtonMatrixElement(rows=[
          make_button_list(xrange(91, 93), 'Track_State_%d')])
+        self._state_buttons5 = ButtonMatrixElement(rows=[
+         make_button_list(xrange(92, 93), 'Track_State_%d')])
 
     def _create_device(self):
         device = DeviceComponent(name='Device_Component', is_enabled=False, device_selection_follows_track_selection=True)
@@ -145,15 +147,15 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         mixer_modes = ModesComponent()
         mixer_modes.add_mode('device', [
-         AddLayerMode(mixer, Layer(track_select_buttons=self._state_buttons1, send_select_buttons=self._state_buttons3, send_switch=self._state_buttons4))])
+         AddLayerMode(mixer, Layer(track_select_buttons=self._state_buttons1, send_select_buttons=self._state_buttons3, master_button=self._state_buttons5))])
         mixer_modes.add_mode('mute', [
          AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons1, solo_buttons=self._state_buttons2))])
-        mixer_modes.add_mode('solo', [
-         AddLayerMode(mixer, Layer(solo_buttons=self._state_buttons2))])
+        mixer_modes.add_mode('send', [
+         AddLayerMode(mixer, Layer(track_activate_send_buttons=self._state_buttons1, send_mute_buttons=self._state_buttons3))])
         mixer_modes.add_mode('crossfader', [
          AddLayerMode(mixer, Layer(crossfader_buttons=self._state_buttons1))])
-        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, crossfader_button=self._crossfader_mode_button)
-        mixer_modes.selected_mode = 'crossfader'
+        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, send_button=self._send_mode_button, crossfader_button=self._crossfader_mode_button)
+        mixer_modes.selected_mode = 'device'
         return mixer
 
     def _create_session(self):

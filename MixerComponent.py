@@ -109,12 +109,6 @@ class MixerComponent(MixerComponentBase):
                 button.set_on_off_values('Mixer.TrackSelected', 'Mixer.TrackUnselected')
             strip.set_select_button(button)
 
-    def set_send_select_buttons(self, buttons):
-        return True
-
-    def set_send_switch(self, buttons):
-        return True
-
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
@@ -132,3 +126,17 @@ class MixerComponent(MixerComponentBase):
             if button:
                 button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
             strip.set_crossfade_toggle(button)
+
+    def set_send_select_buttons(self, buttons):
+        return True
+
+    def set_master_button(self, button):
+        return True
+
+    def set_track_activate_send_buttons(self, buttons):
+        return
+
+    def set_send_mute_buttons(self, buttons):
+        return
+
+
