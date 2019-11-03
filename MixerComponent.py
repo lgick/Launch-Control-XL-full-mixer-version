@@ -11,11 +11,10 @@ from _Framework.ChannelStripComponent import ChannelStripComponent as ChannelStr
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):
-    def set_crossfade_toggle(self, button, side):
+    def set_crossfade_toggle(self, button):
         if button != self._crossfade_toggle:
             self.reset_button_on_exchange(self._crossfade_toggle)
             self._crossfade_toggle = button
-            self._crossfade_toggle.side = side
             self._crossfade_toggle_slot.subject = button
             self.update()
 
@@ -24,11 +23,11 @@ class ChannelStripComponent(ChannelStripComponentBase):
             state = self._track.mixer_device.crossfade_assign if self._track else 1
             value_to_send = None
             if state == 0: #A
-                value_to_send = 'Mixer.CrossOn'
+                value_to_send = 'Mixer.CrossA'
             elif state == 1: #Off
                 value_to_send = 'Mixer.CrossOff'
             elif state == 2: #B
-                value_to_send = 'Mixer.CrossOn'
+                value_to_send = 'Mixer.CrossB'
             self._crossfade_toggle.set_light(value_to_send)
         return
 
@@ -128,14 +127,8 @@ class MixerComponent(MixerComponentBase):
                 button.set_on_off_values('Mixer.MuteOn', 'Mixer.MuteOff')
             strip.set_mute_button(button)
 
-    def set_crossfader_buttons_A(self, buttons):
+    def set_crossfader_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
-            strip.set_crossfade_toggle(button, 'A')
-
-    def set_crossfader_buttons_B(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
-            if button:
-                button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
-            strip.set_crossfade_toggle(button, 'B')
+            strip.set_crossfade_toggle(button)
