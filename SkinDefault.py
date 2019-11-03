@@ -20,9 +20,9 @@ class BiLedColors:
 
     class Mixer:
         SoloOn = Color(60)
-        SoloOff = Color(28)
-        MuteOn = Color(29)
-        MuteOff = Color(47)
+        SoloOff = Color(12)
+        MuteOn = Color(12)
+        MuteOff = Color(63)
         ArmSelected = Color(15)
         ArmUnselected = Color(13)
         TrackSelected = Color(62)
@@ -38,6 +38,15 @@ class BiLedColors:
         SwitchDevice = Color(15)
         PrevDevice = Color(15)
         NextDevice = Color(15)
+
+        TrackSelectButtonOff = Color(29)
+        TrackSelectButtonOn = Color(63)
+        SendSelectButtonOff = Color(29)
+        SendSelectButtonOn = Color(63)
+        SendSwitchOff = Color(13)
+        SendSwitchOn = Color(15)
+        CrossOff = Color(13)
+        CrossOn = Color(15)
 
         NoTrack = Color(0)
         Sends = Color(62)

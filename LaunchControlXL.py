@@ -95,7 +95,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         # send mode
         self._solo_mode_button = make_button(107, 'Solo_Mode', MIDI_NOTE_TYPE)
         # crossfader mode
-        self._arm_mode_button = make_button(108, 'Arm_Mode', MIDI_NOTE_TYPE)
+        self._crossfader_mode_button = make_button(108, 'Crossfader_Mode', MIDI_NOTE_TYPE)
 
         self._up_button = make_button(104, 'Up')
         self._down_button = make_button(105, 'Down')
@@ -119,11 +119,14 @@ class LaunchControlXL(IdentifiableControlSurface):
          make_button_list([
           45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
 
-        self._select_buttons = ButtonMatrixElement(rows=[
+        self._state_buttons1 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])
-        self._state_buttons = ButtonMatrixElement(rows=[
+        self._state_buttons2 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(73, 77), xrange(89, 93)), 'Track_State_%d')])
-
+        self._state_buttons3 = ButtonMatrixElement(rows=[
+         make_button_list(chain(xrange(73, 77), xrange(89, 91)), 'Track_State_%d')])
+        self._state_buttons4 = ButtonMatrixElement(rows=[
+         make_button_list(xrange(91, 93), 'Track_State_%d')])
 
     def _create_device(self):
         device = DeviceComponent(name='Device_Component', is_enabled=False, device_selection_follows_track_selection=True)
@@ -136,21 +139,21 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_mixer(self):
         mixer = MixerComponent(NUM_TRACKS, is_enabled=True, auto_name=True)
-        mixer.layer = Layer(track_select_buttons=self._select_buttons, volume_controls=self._volume_faders)
+        mixer.layer = Layer(volume_controls=self._volume_faders)
         for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
             channel_strip.empty_color = 'Mixer.NoTrack'
 
         mixer_modes = ModesComponent()
         mixer_modes.add_mode('device', [
-         AddLayerMode(mixer, Layer(device_buttons=self._state_buttons))])
+         AddLayerMode(mixer, Layer(track_select_buttons=self._state_buttons1, send_select_buttons=self._state_buttons3, send_switch=self._state_buttons4))])
         mixer_modes.add_mode('mute', [
-         AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons))])
+         AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons1, solo_buttons=self._state_buttons2))])
         mixer_modes.add_mode('solo', [
-         AddLayerMode(mixer, Layer(solo_buttons=self._state_buttons))])
-        mixer_modes.add_mode('arm', [
-         AddLayerMode(mixer, Layer(arm_buttons=self._state_buttons))])
-        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, arm_button=self._arm_mode_button)
-        mixer_modes.selected_mode = 'mute'
+         AddLayerMode(mixer, Layer(solo_buttons=self._state_buttons2))])
+        mixer_modes.add_mode('crossfader', [
+         AddLayerMode(mixer, Layer(crossfader_buttons_A=self._state_buttons1, crossfader_buttons_B=self._state_buttons2))])
+        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, crossfader_button=self._crossfader_mode_button)
+        mixer_modes.selected_mode = 'crossfader'
         return mixer
 
     def _create_session(self):
@@ -188,22 +191,11 @@ class LaunchControlXL(IdentifiableControlSurface):
     def _create_sends(self):
         mixer = MixerComponent(MIXER_NUM_TRACKS, is_enabled=True, auto_name=True)
         mixer.layer = Layer(send_lights=self._send_encoder_lights, send_volume_lights=self._send_volume_lights)
-        #mixer.layer = Layer(track_select_buttons=self._select_buttons, send_controls=self._send_encoders, next_sends_button=self._down_button, prev_sends_button=self._up_button, pan_controls=self._device_controls, volume_controls=self._volume_faders, send_lights=self._send_encoder_lights, pan_lights=self._device_controls_lights)
+        #mixer.layer = Layer(track_select_buttons=self._state_buttons1, send_controls=self._send_encoders, next_sends_button=self._down_button, prev_sends_button=self._up_button, pan_controls=self._device_controls, volume_controls=self._volume_faders, send_lights=self._send_encoder_lights, pan_lights=self._device_controls_lights)
         #mixer.on_send_index_changed = partial(self._show_controlled_sends_message, mixer)
         for channel_strip in map(mixer.channel_strip, xrange(MIXER_NUM_TRACKS)):
             channel_strip.empty_color = 'Mixer.NoTrack'
 
-        mixer_modes = ModesComponent()
-        mixer_modes.add_mode('device', [
-         AddLayerMode(mixer, Layer(device_buttons=self._state_buttons))])
-        mixer_modes.add_mode('mute', [
-         AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons))])
-        mixer_modes.add_mode('solo', [
-         AddLayerMode(mixer, Layer(solo_buttons=self._state_buttons))])
-        mixer_modes.add_mode('arm', [
-         AddLayerMode(mixer, Layer(arm_buttons=self._state_buttons))])
-        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, solo_button=self._solo_mode_button, arm_button=self._arm_mode_button)
-        mixer_modes.selected_mode = 'mute'
         return mixer
 
     def _send_live_template(self):
