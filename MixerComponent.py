@@ -140,10 +140,13 @@ class MixerComponent(MixerComponentBase):
             strip.set_mute_button(button)
 
     def set_master_volume_light(self, button):
+        return True
 
     def set_prehear_volume_light(self, button):
+        return True
 
     def set_crossfader_control_light(self, button):
+        return True
 
     def set_crossfader_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
@@ -158,9 +161,9 @@ class MixerComponent(MixerComponentBase):
         return True
 
     def set_track_activate_send_buttons(self, buttons):
-        return
+        return True
 
     def set_send_mute_buttons(self, buttons):
-        return
+        return True
 
 
