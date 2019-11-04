@@ -45,6 +45,24 @@ class MixerComponent(MixerComponentBase):
     next_sends_button = ButtonControl()
     prev_sends_button = ButtonControl()
 
+    def tracks_to_use(self):
+        return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
+
+    def _create_strip(self):
+        return ChanStripComponent()
+    #prev_device_button = ButtonControl(color='Mixer.PrevDevice')
+    #next_device_button = ButtonControl(color='Mixer.NextDevice')
+    #on_off_button = ButtonControl(color='Mixer.OnOffDevice')
+    #lock_button = ButtonControl(color='Mixer.ResetDevice')
+
+    #@prev_device_button.pressed
+    #def prev_device_button(self, button):
+    #    self._scroll_device_view(Live.Application.Application.View.NavDirection.left)
+
+    #@next_device_button.pressed
+    #def next_device_button(self, button):
+    #    self._scroll_device_view(Live.Application.Application.View.NavDirection.right)
+
     def __init__(self, *a, **k):
         super(MixerComponent, self).__init__(*a, **k)
         self._update_send_buttons()
@@ -120,6 +138,12 @@ class MixerComponent(MixerComponentBase):
             if button:
                 button.set_on_off_values('Mixer.MuteOn', 'Mixer.MuteOff')
             strip.set_mute_button(button)
+
+    def set_master_volume_light(self, button):
+
+    def set_prehear_volume_light(self, button):
+
+    def set_crossfader_control_light(self, button):
 
     def set_crossfader_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):

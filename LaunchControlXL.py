@@ -51,9 +51,9 @@ class LaunchControlXL(IdentifiableControlSurface):
         with self.component_guard():
             mixer = self._create_mixer()
             session = self._create_session()
-            #device = self._create_device()
+            device = self._create_device()
             session.set_mixer(mixer)
-            #self.set_device_component(device)
+            self.set_device_component(device)
         self.set_highlighting_session_component(session)
 
     def _create_controls(self):
@@ -79,14 +79,18 @@ class LaunchControlXL(IdentifiableControlSurface):
         # 41 42 43 44 57 58 59 60
         # 73 74 75 76 89 90 91 92
 
-        #self._pan_device_encoders = ButtonMatrixElement(rows=[[ make_encoder(49 + i, 'Pan_Device_%d' % (i + 1)) for i in xrange(8) ]])
-        self._device_controls = ButtonMatrixElement(rows=[
-         make_button_list([
-          77, 93, 109, 125, 78, 94, 110, 126], 'Device_Control_%d')])
+        self._device_controls = ButtonMatrixElement(rows=[[
+            make_encoder(17, 'Device_Control_1'),
+            make_encoder(18, 'Device_Control_2'),
+            make_encoder(19, 'Device_Control_3'),
+            make_encoder(20, 'Device_Control_4'),
+            make_encoder(33, 'Device_Control_5'),
+            make_encoder(34, 'Device_Control_6'),
+            make_encoder(35, 'Device_Control_7'),
+            make_encoder(36, 'Device_Control_8')
+            ]])
 
-        self._device_controls_lights = ButtonMatrixElement(rows=[
-         make_button_list([
-          77, 93, 109, 125, 78, 94, 110, 126], 'Device_Control_Light_%d')])
+        self._device_controls_lights = ButtonMatrixElement(rows=[make_button_list([77, 93, 109, 125, 78, 94, 110, 126], 'Device_Control_Light_%d')])
 
         # device mode
         self._device_mode_button = make_button(105, 'Device_Mode', MIDI_NOTE_TYPE)
@@ -102,10 +106,14 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._left_button = make_button(106, 'Left')
         self._right_button = make_button(107, 'Right')
 
-        self._crossfader_control = make_encoder(79, name='Crossfader_Control')
-        self._tempo_control = make_encoder(95, name='Tempo_Control')
-        self._phone_volume_control = make_encoder(111, name='Phone_Volume_Control')
-        self._master_volume_control = make_encoder(127, name='Master_Volume_Control')
+        self._crossfader_control = make_encoder(53, 'Crossfader_Control')
+        self._tempo_control = make_encoder(54, 'Tempo_Control')
+        self._prehear_volume_control = make_encoder(55, 'Prehear_Volume_Control')
+        self._master_volume_control = make_encoder(56, 'Master_Volume_Control')
+
+        self._crossfader_control_light = make_button(95, 'Crossfader_Control_Light')
+        self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light')
+        self._master_volume_light = make_button(127, 'Master_Volume_Light')
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
@@ -131,23 +139,48 @@ class LaunchControlXL(IdentifiableControlSurface):
          make_button_list(xrange(92, 93), 'Track_State_%d')])
 
     def _create_device(self):
-        device = DeviceComponent(name='Device_Component', is_enabled=False, device_selection_follows_track_selection=True)
+        device = DeviceComponent(name='Device_Component', is_enabled=True, device_selection_follows_track_selection=True)
         device.layer = Layer(parameter_controls=self._device_controls, parameter_lights=self._device_controls_lights, priority=1)
-        device_settings_layer = Layer(prev_device_button=self._left_button, next_device_button=self._right_button, priority=1)
-        mode = DeviceModeComponent(component=device, device_settings_mode=[
-         AddLayerMode(device, device_settings_layer)], is_enabled=True)
-        mode.layer = Layer(device_mode_button=self._device_mode_button)
+
+        #device_settings_layer = Layer()
+        #mode = DeviceModeComponent(component=device, device_settings_mode=[
+        # AddLayerMode(device, device_settings_layer)], is_enabled=True)
+        #mode.layer = Layer(device_mode_button=self._device_mode_button)
+
+        #parameter_controls=self._device_controls,
+        #bank_buttons=self._device_bank_buttons,
+        #bank_prev_button=self._device_prev_bank_button,
+        #bank_next_button=self._device_next_bank_button,
+        #prev_device_button=self._left_button,
+        #next_device_button=self._right_button,
+        #on_off_button=self._down_button,
+        #lock_button=self._up_button
+
         return device
 
     def _create_mixer(self):
         mixer = MixerComponent(NUM_TRACKS, is_enabled=True, auto_name=True)
-        mixer.layer = Layer(volume_controls=self._volume_faders)
+        mixer.layer = Layer(
+                volume_controls=self._volume_faders,
+                master_volume_light=self._master_volume_light,
+                prehear_volume_light=self._prehear_volume_light,
+                crossfader_control_light=self._crossfader_control_light
+                )
+
+        mixer.set_crossfader_control(self._crossfader_control)
+        mixer.set_prehear_volume_control(self._prehear_volume_control)
+        mixer.master_strip().set_volume_control(self._master_volume_control)
+
         for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
             channel_strip.empty_color = 'Mixer.NoTrack'
 
         mixer_modes = ModesComponent()
         mixer_modes.add_mode('device', [
-         AddLayerMode(mixer, Layer(track_select_buttons=self._state_buttons1, send_select_buttons=self._state_buttons3, master_button=self._state_buttons5))])
+         AddLayerMode(mixer, Layer(
+             track_select_buttons=self._state_buttons1,
+             send_select_buttons=self._state_buttons3,
+             master_button=self._state_buttons5
+             ))])
         mixer_modes.add_mode('mute', [
          AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons1, solo_buttons=self._state_buttons2))])
         mixer_modes.add_mode('send', [

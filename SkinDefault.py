@@ -35,7 +35,7 @@ class BiLedColors:
         Play = Color(60)
 
         ResetDevice = Color(15)
-        SwitchDevice = Color(15)
+        OnOffDevice = Color(15)
         PrevDevice = Color(15)
         NextDevice = Color(15)
 
@@ -53,9 +53,12 @@ class BiLedColors:
         Sends = Color(62)
         VolumeSends = Color(60)
 
+        PrehearVolume = Color(60)
+        MasterVolume = Color(60)
+
     class Device:
-        Parameters = Color(13)
-        NoDevice = Color(0)
+        Parameters = Color(15)
+        NoDevice = Color(13)
         BankSelected = Color(15)
         BankUnselected = Color(0)
 
