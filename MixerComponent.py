@@ -32,11 +32,9 @@ class ChannelStripComponent(ChannelStripComponentBase):
         return
 
     send_lights = control_list(ButtonControl, control_count=2, color='Mixer.Sends', disabled_color='Mixer.NoTrack')
-    pan_light = ButtonControl(color='Mixer.Pans', disabled_color='Mixer.NoTrack')
 
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
-        self.pan_light.enabled = bool(track)
         for light in self.send_lights:
             light.enabled = bool(track)
 
@@ -44,24 +42,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
 class MixerComponent(MixerComponentBase):
     next_sends_button = ButtonControl()
     prev_sends_button = ButtonControl()
-
-    def tracks_to_use(self):
-        return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
-
-    def _create_strip(self):
-        return ChanStripComponent()
-    #prev_device_button = ButtonControl(color='Mixer.PrevDevice')
-    #next_device_button = ButtonControl(color='Mixer.NextDevice')
-    #on_off_button = ButtonControl(color='Mixer.OnOffDevice')
-    #lock_button = ButtonControl(color='Mixer.ResetDevice')
-
-    #@prev_device_button.pressed
-    #def prev_device_button(self, button):
-    #    self._scroll_device_view(Live.Application.Application.View.NavDirection.left)
-
-    #@next_device_button.pressed
-    #def next_device_button(self, button):
-    #    self._scroll_device_view(Live.Application.Application.View.NavDirection.right)
 
     def __init__(self, *a, **k):
         super(MixerComponent, self).__init__(*a, **k)
@@ -91,10 +71,6 @@ class MixerComponent(MixerComponentBase):
             channel_strip.send_lights.set_control_element(elements)
 
         return
-
-    def set_pan_lights(self, lights):
-        for strip, light in izip_longest(self._channel_strips, lights or []):
-            strip.pan_light.set_control_element(light)
 
     def _get_send_index(self):
         return super(MixerComponent, self)._get_send_index()
@@ -139,20 +115,12 @@ class MixerComponent(MixerComponentBase):
                 button.set_on_off_values('Mixer.MuteOn', 'Mixer.MuteOff')
             strip.set_mute_button(button)
 
-    def set_master_volume_light(self, button):
-        return True
-
-    def set_prehear_volume_light(self, button):
-        return True
-
-    def set_crossfader_control_light(self, button):
-        return True
-
     def set_crossfader_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
             strip.set_crossfade_toggle(button)
+
 
     def set_send_select_buttons(self, buttons):
         return True
@@ -167,3 +135,16 @@ class MixerComponent(MixerComponentBase):
         return True
 
 
+
+
+    def set_send_controls(self, controls):
+        return True
+
+    def set_send_controls_lights(self, controls):
+        return True
+
+    def set_send_volumes(self, controls):
+        return True
+
+    def set_send_volumes_lights(self, controls):
+        return True

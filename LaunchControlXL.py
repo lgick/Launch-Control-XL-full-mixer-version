@@ -111,19 +111,38 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._prehear_volume_control = make_encoder(55, 'Prehear_Volume_Control')
         self._master_volume_control = make_encoder(56, 'Master_Volume_Control')
 
-        self._crossfader_control_light = make_button(95, 'Crossfader_Control_Light')
-        self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light')
-        self._master_volume_light = make_button(127, 'Master_Volume_Light')
+        #self._crossfader_control_light = make_button(95, 'Crossfader_Control_Light')
+        #self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light')
+        #self._master_volume_light = make_button(127, 'Master_Volume_Light')
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
         #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Top_Send_%d' % (i + 1)) for i in xrange(8) ], [ make_encoder(29 + i, 'Bottom_Send_%d' % (i + 1)) for i in xrange(8) ]])
-        self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Send_%d' % (i + 1)) for i in xrange(6) ]])
-        self._send_encoder_lights = ButtonMatrixElement(rows=[
-         make_button_list([
-          13, 29, 14, 30, 15, 31], 'Send_Encoder_Light_%d')])
+        #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Send_%d' % (i + 1)) for i in xrange(6) ]])
 
-        self._send_volume_lights = ButtonMatrixElement(rows=[
+        self._send_controls = ButtonMatrixElement(rows=[[
+            make_encoder(13, 'Send_Control_1'),
+            make_encoder(14, 'Send_Control_2'),
+            make_encoder(29, 'Send_Control_3'),
+            make_encoder(30, 'Send_Control_4'),
+            make_encoder(49, 'Send_Control_5'),
+            make_encoder(50, 'Send_Control_6')
+            ]])
+
+        self._send_controls_lights = ButtonMatrixElement(rows=[
+         make_button_list([
+          13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
+
+        self._send_volumes = ButtonMatrixElement(rows=[[
+            make_encoder(15, 'Send_Volume_1'),
+            make_encoder(16, 'Send_Volume_2'),
+            make_encoder(31, 'Send_Volume_3'),
+            make_encoder(32, 'Send_Volume_4'),
+            make_encoder(51, 'Send_Volume_5'),
+            make_encoder(52, 'Send_Volume_6')
+            ]])
+
+        self._send_volumes_lights = ButtonMatrixElement(rows=[
          make_button_list([
           45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
 
@@ -162,9 +181,10 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer = MixerComponent(NUM_TRACKS, is_enabled=True, auto_name=True)
         mixer.layer = Layer(
                 volume_controls=self._volume_faders,
-                master_volume_light=self._master_volume_light,
-                prehear_volume_light=self._prehear_volume_light,
-                crossfader_control_light=self._crossfader_control_light
+                send_controls=self._send_controls,
+                send_controls_lights=self._send_controls_lights,
+                send_volumes=self._send_volumes,
+                send_volumes_lights=self._send_volumes_lights
                 )
 
         mixer.set_crossfader_control(self._crossfader_control)
@@ -188,7 +208,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer_modes.add_mode('crossfader', [
          AddLayerMode(mixer, Layer(crossfader_buttons=self._state_buttons1))])
         mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, send_button=self._send_mode_button, crossfader_button=self._crossfader_mode_button)
-        mixer_modes.selected_mode = 'device'
+        mixer_modes.selected_mode = 'send'
         return mixer
 
     def _create_session(self):
@@ -222,16 +242,6 @@ class LaunchControlXL(IdentifiableControlSurface):
             self.show_message('Controlling Track %d to %d' % (start, end))
         else:
             self.show_message('Controlling Track %d' % start)
-
-    def _create_sends(self):
-        mixer = MixerComponent(MIXER_NUM_TRACKS, is_enabled=True, auto_name=True)
-        mixer.layer = Layer(send_lights=self._send_encoder_lights, send_volume_lights=self._send_volume_lights)
-        #mixer.layer = Layer(track_select_buttons=self._state_buttons1, send_controls=self._send_encoders, next_sends_button=self._down_button, prev_sends_button=self._up_button, pan_controls=self._device_controls, volume_controls=self._volume_faders, send_lights=self._send_encoder_lights, pan_lights=self._device_controls_lights)
-        #mixer.on_send_index_changed = partial(self._show_controlled_sends_message, mixer)
-        for channel_strip in map(mixer.channel_strip, xrange(MIXER_NUM_TRACKS)):
-            channel_strip.empty_color = 'Mixer.NoTrack'
-
-        return mixer
 
     def _send_live_template(self):
         self._send_midi(LIVE_TEMPLATE_SYSEX)
