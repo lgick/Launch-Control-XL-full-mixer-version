@@ -226,6 +226,8 @@ class LaunchControlXL(IdentifiableControlSurface):
         #stop_all_clips_button=self._stop_all_button
         #scene_launch_buttons=self._scene_launch_buttons
         #clip_launch_buttons=self._session_matrix
+
+        #session.layer = Layer(track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
         session.layer = Layer(stop_all_clips_button=self._left_button, scene_launch_buttons=ButtonMatrixElement(rows=[[self._right_button]]), scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
         self._on_session_offset_changed.subject = session
         return session
