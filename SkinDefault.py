@@ -46,8 +46,7 @@ class BiLedColors:
         SendSwitchOff = Color(13)
         SendSwitchOn = Color(15)
         CrossOff = Color(13)
-        CrossA = Color(63)
-        CrossB = Color(60)
+        CrossOn = Color(15)
 
         NoTrack = Color(0)
         Sends = Color(62)

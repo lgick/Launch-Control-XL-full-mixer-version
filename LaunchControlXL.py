@@ -206,7 +206,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer_modes.add_mode('send', [
          AddLayerMode(mixer, Layer(track_activate_send_buttons=self._state_buttons1, send_mute_buttons=self._state_buttons3))])
         mixer_modes.add_mode('crossfader', [
-         AddLayerMode(mixer, Layer(crossfader_buttons=self._state_buttons1))])
+         AddLayerMode(mixer, Layer(crossfader_buttons_A=self._state_buttons1, crossfader_buttons_B=self._state_buttons2))])
         mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, send_button=self._send_mode_button, crossfader_button=self._crossfader_mode_button)
         mixer_modes.selected_mode = 'send'
         return mixer
