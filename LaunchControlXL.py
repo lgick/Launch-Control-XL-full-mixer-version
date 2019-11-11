@@ -117,9 +117,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
-        #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Top_Send_%d' % (i + 1)) for i in xrange(8) ], [ make_encoder(29 + i, 'Bottom_Send_%d' % (i + 1)) for i in xrange(8) ]])
-        #self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, 'Send_%d' % (i + 1)) for i in xrange(6) ]])
-
         self._send_controls = ButtonMatrixElement(rows=[[
             make_encoder(13, 'Send_Control_1'),
             make_encoder(14, 'Send_Control_2'),
