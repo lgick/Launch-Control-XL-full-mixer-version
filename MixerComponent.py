@@ -12,26 +12,6 @@ from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 from ableton.v2.base import listens, liveobj_valid
 
 class ChannelStripComponent(ChannelStripComponentBase):
-    def _crossfade_toggle_A_value(self, value):
-        current = self._track.mixer_device.crossfade_assign
-        if self.is_enabled():
-            if liveobj_valid(self._track):
-                if value != 0 or not self._crossfade_toggle.is_momentary():
-                    if current == 0:
-                        self._track.mixer_device.crossfade_assign = 1
-                    elif current == 1 or current == 2:
-                        self._track.mixer_device.crossfade_assign = 0
-
-    def _crossfade_toggle_B_value(self, value):
-        current = self._track.mixer_device.crossfade_assign
-        if self.is_enabled():
-            if liveobj_valid(self._track):
-                if value != 0 or not self._crossfade_toggle.is_momentary():
-                    if current == 2:
-                        self._track.mixer_device.crossfade_assign = 1
-                    elif current == 1 or current == 0:
-                        self._track.mixer_device.crossfade_assign = 2
-
     def __init__(self, *a, **k):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._crossfade_toggle_A = None
@@ -43,6 +23,26 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
         self._crossfade_toggle_slot_A = make_button_slot('crossfade_toggle_A')
         self._crossfade_toggle_slot_B = make_button_slot('crossfade_toggle_B')
+
+    def _crossfade_toggle_A_value(self, value):
+        current = self._track.mixer_device.crossfade_assign
+        if self.is_enabled():
+            if liveobj_valid(self._track):
+                if value != 0:
+                    if current == 0:
+                        self._track.mixer_device.crossfade_assign = 1
+                    elif current == 1 or current == 2:
+                        self._track.mixer_device.crossfade_assign = 0
+
+    def _crossfade_toggle_B_value(self, value):
+        current = self._track.mixer_device.crossfade_assign
+        if self.is_enabled():
+            if liveobj_valid(self._track):
+                if value != 0:
+                    if current == 2:
+                        self._track.mixer_device.crossfade_assign = 1
+                    elif current == 1 or current == 0:
+                        self._track.mixer_device.crossfade_assign = 2
 
     def disconnect(self):
         super(ChannelStripComponent, self).disconnect()
