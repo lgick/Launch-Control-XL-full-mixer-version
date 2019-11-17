@@ -17,12 +17,25 @@ class ChannelStripComponent(ChannelStripComponentBase):
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
         self._track_activate_send_button = None
+        self._track_activate_pressed = False
 
         def make_button_slot(name):
             return self.register_slot(None, getattr(self, '_%s_value' % name), 'value')
 
         self._crossfade_toggle_slot_A = make_button_slot('crossfade_toggle_A')
         self._crossfade_toggle_slot_B = make_button_slot('crossfade_toggle_B')
+        self._track_activate_send_button_slot = make_button_slot('track_activate')
+
+    def _track_activate_value(self, value):
+        if self.is_enabled():
+            if liveobj_valid(self._track):
+                if value != 0:
+                    if self._track_activate_pressed == False:
+                        self._track_activate_pressed = True
+                    elif self._track_activate_pressed == True:
+                        self._track_activate_pressed = False
+
+                    self._on_track_activate_changed()
 
     def _crossfade_toggle_A_value(self, value):
         current = self._track.mixer_device.crossfade_assign
@@ -72,23 +85,26 @@ class ChannelStripComponent(ChannelStripComponentBase):
             self._crossfade_toggle_slot_B.subject = button
             self.update()
 
+    def set_track_activate_send(self, button):
+        if button != self._track_activate_send_button:
+            self.reset_button_on_exchange(self._track_activate_send_button)
+            self._track_activate_send_button = button
+            self._track_activate_send_button_slot.subject = button
+            self.update()
+
     def update(self):
         super(ChannelStripComponent, self).update()
 
         if self.is_enabled():
-            self._on_track_activate_send()
+            self._on_track_activate_changed()
 
-    def _on_track_activate_send(self):
+    def _on_track_activate_changed(self):
         if self.is_enabled() and self._track_activate_send_button:
             if self._track:
-                if self._track_activate_send_button.is_pressed:
-                    self._track_activate_send_button.set_light(True)
-                else:
-                    self._track_activate_send_button.set_light(False)
+                self._track_activate_send_button.set_light(self._track_activate_pressed)
             else:
                 self._track_activate_send_button.set_light('Mixer.NoTrack')
         return
-
 
     def _on_cf_assign_changed(self):
         if self.is_enabled() and self._crossfade_toggle_A and self._crossfade_toggle_B:
@@ -106,14 +122,7 @@ class ChannelStripComponent(ChannelStripComponentBase):
             else:
                 self._crossfade_toggle_A.set_light('Mixer.NoTrack')
                 self._crossfade_toggle_B.set_light('Mixer.NoTrack')
-
         return
-
-    def set_track_activate_send(self, button):
-        if button != self._track_activate_send_button:
-            self.reset_button_on_exchange(self._track_activate_send_button)
-            self._track_activate_send_button = button
-            self.update()
 
 
 class MixerComponent(MixerComponentBase):
