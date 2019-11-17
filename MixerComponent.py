@@ -38,9 +38,9 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     self._on_track_activate_changed()
 
     def _crossfade_toggle_A_value(self, value):
-        current = self._track.mixer_device.crossfade_assign
         if self.is_enabled():
             if liveobj_valid(self._track):
+                current = self._track.mixer_device.crossfade_assign
                 if value != 0:
                     if current == 0:
                         self._track.mixer_device.crossfade_assign = 1
@@ -48,9 +48,9 @@ class ChannelStripComponent(ChannelStripComponentBase):
                         self._track.mixer_device.crossfade_assign = 0
 
     def _crossfade_toggle_B_value(self, value):
-        current = self._track.mixer_device.crossfade_assign
         if self.is_enabled():
             if liveobj_valid(self._track):
+                current = self._track.mixer_device.crossfade_assign
                 if value != 0:
                     if current == 2:
                         self._track.mixer_device.crossfade_assign = 1
