@@ -49,6 +49,8 @@ class BiLedColors:
         Sends = Color(62)
         VolumeSends = Color(60)
 
+        CrossControl = Color(60)
+        TempoControl = Color(60)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 

@@ -70,10 +70,17 @@ class LaunchControlXL(IdentifiableControlSurface):
         def make_slider(identifier, name):
             return SliderElement(MIDI_CC_TYPE, LIVE_CHANNEL, identifier, name=name)
 
+        # controls
+        # 13 14 15 16 17 18 19 20
+        # 29 30 31 32 33 34 35 36
+        # 49 50 51 52 53 54 55 56
+
+        # controls lights
         # 13 29 45 61 77 93 109 125
         # 14 30 46 62 78 94 110 126
         # 15 31 47 63 79 95 111 127
 
+        # buttons
         # 41 42 43 44 57 58 59 60
         # 73 74 75 76 89 90 91 92
 
@@ -114,9 +121,10 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._prehear_volume_control = make_encoder(55, 'Prehear_Volume_Control')
         self._master_volume_control = make_encoder(56, 'Master_Volume_Control')
 
-        #self._crossfader_control_light = make_button(95, 'Crossfader_Control_Light')
-        #self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light')
-        #self._master_volume_light = make_button(127, 'Master_Volume_Light')
+        self._crossfader_control_light = make_button(79, 'Crossfader_Control_Light', MIDI_NOTE_TYPE)
+        self._tempo_control_light = make_button(95, 'Tempo_Control_Light', MIDI_NOTE_TYPE)
+        self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light', MIDI_NOTE_TYPE)
+        self._master_volume_light = make_button(127, 'Master_Volume_Light', MIDI_NOTE_TYPE)
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
@@ -185,7 +193,11 @@ class LaunchControlXL(IdentifiableControlSurface):
                 send_controls=self._send_controls,
                 send_controls_lights=self._send_controls_lights,
                 send_volumes=self._send_volumes,
-                send_volumes_lights=self._send_volumes_lights
+                send_volumes_lights=self._send_volumes_lights,
+                crossfader_control_light=self._crossfader_control_light,
+                tempo_control_light=self._tempo_control_light,
+                prehear_volume_light=self._prehear_volume_light,
+                master_volume_light=self._master_volume_light
                 )
 
         mixer.set_crossfader_control(self._crossfader_control)

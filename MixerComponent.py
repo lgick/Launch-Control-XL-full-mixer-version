@@ -150,6 +150,10 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
 class MixerComponent(MixerComponentBase):
     tracks_activate_send_button = ButtonControl()
+    crossfader_control_light = ButtonControl()
+    tempo_control_light = ButtonControl()
+    prehear_volume_light = ButtonControl()
+    master_volume_light = ButtonControl()
 
     @tracks_activate_send_button.pressed
     def tracks_activate_send_button(self, button):
@@ -252,3 +256,27 @@ class MixerComponent(MixerComponentBase):
 
     def set_send_volumes_lights(self, controls):
         return True
+
+    def set_crossfader_control_light(self, button):
+        if button:
+            self.crossfader_control_light.set_control_element(button)
+            self.crossfader_control_light.color = "Mixer.CrossControl"
+            self.crossfader_control_light.enabled = True
+
+    def set_tempo_control_light(self, button):
+        if button:
+            self.tempo_control_light.set_control_element(button)
+            self.tempo_control_light.color = "Mixer.TempoControl"
+            self.tempo_control_light.enabled = True
+
+    def set_prehear_volume_light(self, button):
+        if button:
+            self.prehear_volume_light.set_control_element(button)
+            self.prehear_volume_light.color = "Mixer.PrehearVolume"
+            self.prehear_volume_light.enabled = True
+
+    def set_master_volume_light(self, button):
+        if button:
+            self.master_volume_light.set_control_element(button)
+            self.master_volume_light.color = "Mixer.MasterVolume"
+            self.master_volume_light.enabled = True
