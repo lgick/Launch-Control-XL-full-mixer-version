@@ -22,7 +22,7 @@ from _Framework import Task
 from .ButtonElement import ButtonElement
 from .DeviceComponent import DeviceComponent, DeviceModeComponent
 from .MixerComponent import MixerComponent
-from .SkinDefault import make_biled_skin, make_default_skin
+from .SkinDefault import make_biled_skin
 
 MIXER_NUM_TRACKS = 6
 NUM_TRACKS = 8
@@ -35,7 +35,6 @@ class LaunchControlXL(IdentifiableControlSurface):
     def __init__(self, c_instance, *a, **k):
         super(LaunchControlXL, self).__init__(c_instance=c_instance, product_id_bytes=(0, 32, 41, 97), *a, **k)
         self._biled_skin = make_biled_skin()
-        self._default_skin = make_default_skin()
 
         with self.component_guard():
             self._create_controls()
@@ -58,8 +57,7 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_controls(self):
 
-        def make_button(identifier, name, midi_type=MIDI_CC_TYPE, skin=self._default_skin):
-            #self.log_message(name)
+        def make_button(identifier, name, midi_type=MIDI_CC_TYPE, skin=self._biled_skin):
             return ButtonElement(True, midi_type, LIVE_CHANNEL, identifier, name=name, skin=skin)
 
         def make_button_list(identifiers, name):
@@ -100,6 +98,11 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._send_mode_button = make_button(107, 'Send_Mode', MIDI_NOTE_TYPE)
         # crossfader mode
         self._crossfader_mode_button = make_button(108, 'Crossfader_Mode', MIDI_NOTE_TYPE)
+
+        self._switch_sends_button =  make_button(91, 'Switch_Sends_Button', MIDI_NOTE_TYPE)
+        self._tracks_activate_send_button =  make_button(92, 'Tracks_Activate_Send_Button', MIDI_NOTE_TYPE)
+
+        self._master_select_button =  make_button(91, 'Master_Select_Button', MIDI_NOTE_TYPE)
 
         self._up_button = make_button(104, 'Up')
         self._down_button = make_button(105, 'Down')
@@ -149,10 +152,11 @@ class LaunchControlXL(IdentifiableControlSurface):
          make_button_list(chain(xrange(73, 77), xrange(89, 93)), 'Track_State_%d')])
         self._state_buttons3 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(73, 77), xrange(89, 91)), 'Track_State_%d')])
-        self._state_buttons4 = ButtonMatrixElement(rows=[
-         make_button_list(xrange(91, 93), 'Track_State_%d')])
-        self._state_buttons5 = ButtonMatrixElement(rows=[
-         make_button_list(xrange(92, 93), 'Track_State_%d')])
+
+        #self._state_buttons4 = ButtonMatrixElement(rows=[
+        # make_button_list(xrange(91, 92), 'Track_State_%d')])
+        #self._state_buttons5 = ButtonMatrixElement(rows=[
+        # make_button_list(xrange(92, 93), 'Track_State_%d')])
 
     def _create_device(self):
         device = DeviceComponent(name='Device_Component', is_enabled=True, device_selection_follows_track_selection=True)
@@ -192,19 +196,40 @@ class LaunchControlXL(IdentifiableControlSurface):
             channel_strip.empty_color = 'Mixer.NoTrack'
 
         mixer_modes = ModesComponent()
+
         mixer_modes.add_mode('device', [
          AddLayerMode(mixer, Layer(
              track_select_buttons=self._state_buttons1,
              send_select_buttons=self._state_buttons3,
-             master_button=self._state_buttons5
+             master_select_button=self._master_select_button
              ))])
+
         mixer_modes.add_mode('mute', [
-         AddLayerMode(mixer, Layer(mute_buttons=self._state_buttons1, solo_buttons=self._state_buttons2))])
+         AddLayerMode(mixer, Layer(
+             mute_buttons=self._state_buttons1,
+             solo_buttons=self._state_buttons2
+             ))])
+
         mixer_modes.add_mode('send', [
-         AddLayerMode(mixer, Layer(track_activate_send_buttons=self._state_buttons1, send_mute_buttons=self._state_buttons3))])
+         AddLayerMode(mixer, Layer(
+             track_activate_send_buttons=self._state_buttons1,
+             send_mute_buttons=self._state_buttons3,
+             switch_sends_button=self._switch_sends_button,
+             tracks_activate_send_button=self._tracks_activate_send_button
+             ))])
+
         mixer_modes.add_mode('crossfader', [
-         AddLayerMode(mixer, Layer(crossfader_buttons_A=self._state_buttons1, crossfader_buttons_B=self._state_buttons2))])
-        mixer_modes.layer = Layer(device_button=self._device_mode_button, mute_button=self._mute_mode_button, send_button=self._send_mode_button, crossfader_button=self._crossfader_mode_button)
+         AddLayerMode(mixer, Layer(
+             crossfader_buttons_A=self._state_buttons1,
+             crossfader_buttons_B=self._state_buttons2
+             ))])
+
+        mixer_modes.layer = Layer(
+                device_button=self._device_mode_button,
+                mute_button=self._mute_mode_button,
+                send_button=self._send_mode_button,
+                crossfader_button=self._crossfader_mode_button
+                )
         mixer_modes.selected_mode = 'send'
         return mixer
 
@@ -224,8 +249,8 @@ class LaunchControlXL(IdentifiableControlSurface):
         #scene_launch_buttons=self._scene_launch_buttons
         #clip_launch_buttons=self._session_matrix
 
-        #session.layer = Layer(track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
-        session.layer = Layer(stop_all_clips_button=self._left_button, scene_launch_buttons=ButtonMatrixElement(rows=[[self._right_button]]), scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
+        session.layer = Layer(track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
+        #session.layer = Layer(stop_all_clips_button=self._left_button, scene_launch_buttons=ButtonMatrixElement(rows=[[self._right_button]]), scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button)
         self._on_session_offset_changed.subject = session
         return session
 

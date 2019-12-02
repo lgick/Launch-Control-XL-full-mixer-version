@@ -8,26 +8,19 @@ from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Skin import Skin
 from _Framework.ButtonElement import Color
 
-class Defaults:
-
+class BiLedColors:
     class DefaultButton:
         On = Color(127)
         Off = Color(0)
         Disabled = Color(0)
-
-
-class BiLedColors:
 
     class Mixer:
         SoloOn = Color(60)
         SoloOff = Color(29)
         MuteOn = Color(29)
         MuteOff = Color(60)
-        ArmSelected = Color(15)
-        ArmUnselected = Color(13)
         TrackSelected = Color(58)
         TrackUnselected = Color(29)
-        Pans = Color(60)
 
         Up = Color(60)
         Down = Color(60)
@@ -41,11 +34,14 @@ class BiLedColors:
 
         TrackActivateSendButtonOff = Color(28)
         TrackActivateSendButtonOn = Color(63)
+        TracksActivateSendButtonOff = Color(13)
+        TracksActivateSendButtonOn = Color(15)
 
         SendSelectButtonOff = Color(29)
         SendSelectButtonOn = Color(63)
-        SendSwitchOff = Color(13)
-        SendSwitchOn = Color(15)
+        SwitchSendsButtonOff = Color(28)
+        SwitchSendsButtonOn = Color(60)
+
         CrossOff = Color(12)
         CrossOn = Color(13)
 
@@ -61,10 +57,6 @@ class BiLedColors:
         NoDevice = Color(13)
         BankSelected = Color(15)
         BankUnselected = Color(0)
-
-
-def make_default_skin():
-    return Skin(Defaults)
 
 
 def make_biled_skin():
