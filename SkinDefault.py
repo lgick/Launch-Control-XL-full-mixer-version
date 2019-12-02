@@ -46,11 +46,14 @@ class BiLedColors:
         CrossOn = Color(13)
 
         NoTrack = Color(0)
-        Sends = Color(62)
-        VolumeSends = Color(60)
+
+        SendsA = Color(63)
+        SendsB = Color(15)
+        VolumeSendsA = Color(62)
+        VolumeSendsB = Color(62)
 
         CrossControl = Color(60)
-        TempoControl = Color(60)
+        TempoControl = Color(12)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 

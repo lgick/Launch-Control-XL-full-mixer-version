@@ -249,6 +249,8 @@ class MixerComponent(MixerComponentBase):
         return
 
     def set_send_controls_lights(self, controls):
+        #return_tracks = self.song().return_tracks
+        #for control, track in izip_longest(controls, return_tracks or []):
         return
 
     def set_send_volumes(self, controls):
