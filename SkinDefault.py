@@ -32,8 +32,8 @@ class BiLedColors:
         PrevDevice = Color(15)
         NextDevice = Color(15)
 
-        TrackActivateSendButtonOff = Color(28)
-        TrackActivateSendButtonOn = Color(63)
+        TrackActivateSendButtonOff = Color(29)
+        TrackActivateSendButtonOn = Color(60)
         TracksActivateSendButtonOff = Color(13)
         TracksActivateSendButtonOn = Color(15)
 
