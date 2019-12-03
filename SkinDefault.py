@@ -9,59 +9,68 @@ from _Framework.Skin import Skin
 from _Framework.ButtonElement import Color
 
 class BiLedColors:
-    class DefaultButton:
-        On = Color(127)
+    class Color:
         Off = Color(0)
-        Disabled = Color(0)
 
-    class Mixer:
-        SoloOn = Color(60)
-        SoloOff = Color(29)
-        MuteOn = Color(29)
-        MuteOff = Color(60)
-        TrackSelected = Color(58)
-        TrackUnselected = Color(29)
 
-        Up = Color(60)
-        Down = Color(60)
-        Stop = Color(60)
-        Play = Color(60)
-
-        ResetDevice = Color(15)
-        DeviceOn = Color(15)
-        DeviceOff = Color(12)
-        PrevDevice = Color(15)
-        NextDevice = Color(15)
-
-        Parameters = Color(15)
-
-        TrackActivateSendButtonOff = Color(29)
-        TrackActivateSendButtonOn = Color(60)
-        TracksActivateSendButtonOff = Color(13)
-        TracksActivateSendButtonOn = Color(15)
-
-        SendSelectButtonOff = Color(29)
-        SendSelectButtonOn = Color(63)
-        SwitchSendsButtonOff = Color(28)
-        SwitchSendsButtonOn = Color(60)
-
-        CrossOff = Color(12)
-        CrossOn = Color(13)
-
-        NoTrack = Color(0)
-
+        #controls
         SendsA = Color(63)
         SendsB = Color(15)
+
         VolumeSendsA = Color(62)
         VolumeSendsB = Color(62)
+
+        DeviceControl = Color(15)
 
         CrossControl = Color(60)
         TempoControl = Color(12)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 
-    class Device:
-        NoDevice = Color(13)
+
+        # nav buttons
+        NavUp = Color(60)
+        NavDown = Color(60)
+        NavLeft = Color(60)
+        NavRight = Color(60)
+
+
+        # Device mode
+        TrackSelected = Color(58)
+        TrackUnselected = Color(29)
+
+        SendSelected = Color(58)
+        SendUnselected = Color(29)
+
+        MasterSelected = Color(58)
+        MasterUnselected = Color(29)
+
+
+        # Mute mode
+        SoloOn = Color(60)
+        SoloOff = Color(29)
+
+        MuteOn = Color(29)
+        MuteOff = Color(60)
+
+
+        # Send mode
+        TrackActivatedSend = Color(60)
+        TrackUnactivatedSend = Color(29)
+
+        SendMuteOn = Color(60)
+        SendMuteOff = Color(28)
+
+        SendSideA = Color(15)
+        SendSideB = Color(60)
+
+        TracksActivatedSend = Color(60)
+        TracksUnactivatedSend = Color(29)
+
+
+        # Cross mode
+        CrossOn = Color(13)
+        CrossOff = Color(12)
 
 
 def make_biled_skin():

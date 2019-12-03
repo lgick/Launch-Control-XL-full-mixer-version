@@ -269,7 +269,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer.master_strip().set_volume_control(self._master_volume_control)
 
         for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
-            channel_strip.empty_color = 'Mixer.NoTrack'
+            channel_strip.empty_color = 'Color.Off'
 
         return mixer
 

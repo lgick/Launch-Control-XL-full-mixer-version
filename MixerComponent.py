@@ -126,7 +126,7 @@ class ChannelStripComponent(ChannelStripComponentBase):
                 else:
                     self._track_activate_send_button.set_light(False)
             else:
-                self._track_activate_send_button.set_light('Mixer.NoTrack')
+                self._track_activate_send_button.set_light('Color.Off')
         return
 
     def _on_cf_assign_changed(self):
@@ -143,8 +143,8 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     self._crossfade_toggle_A.set_light(False)
                     self._crossfade_toggle_B.set_light(True)
             else:
-                self._crossfade_toggle_A.set_light('Mixer.NoTrack')
-                self._crossfade_toggle_B.set_light('Mixer.NoTrack')
+                self._crossfade_toggle_A.set_light('Color.Off')
+                self._crossfade_toggle_B.set_light('Color.Off')
         return
 
 
@@ -162,7 +162,7 @@ class MixerComponent(MixerComponentBase):
 
         if ALL_TRACK_ACTIVATORS == True:
             ALL_TRACK_ACTIVATORS = False
-            self.tracks_activate_send_button.color = "Mixer.TracksActivateSendButtonOff"
+            self.tracks_activate_send_button.color = "Color.TracksUnactivatedSend"
 
             for track_index in TRACK_ACTIVATORS:
                 TRACK_ACTIVATORS[track_index] = 0
@@ -171,7 +171,7 @@ class MixerComponent(MixerComponentBase):
                 strip._on_track_activate_changed()
         else:
             ALL_TRACK_ACTIVATORS = True
-            self.tracks_activate_send_button.color = "Mixer.TracksActivateSendButtonOn"
+            self.tracks_activate_send_button.color = "Color.TracksActivatedSend"
 
             for track_index in TRACK_ACTIVATORS:
                 TRACK_ACTIVATORS[track_index] = 1
@@ -188,31 +188,31 @@ class MixerComponent(MixerComponentBase):
     def set_track_select_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.TrackSelected', 'Mixer.TrackUnselected')
+                button.set_on_off_values('Color.TrackSelected', 'Color.TrackUnselected')
             strip.set_select_button(button)
 
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.SoloOn', 'Mixer.SoloOff')
+                button.set_on_off_values('Color.SoloOn', 'Color.SoloOff')
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.MuteOn', 'Mixer.MuteOff')
+                button.set_on_off_values('Color.MuteOn', 'Color.MuteOff')
             strip.set_mute_button(button)
 
     def set_crossfader_buttons_A(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
+                button.set_on_off_values('Color.CrossOn', 'Color.CrossOff')
             strip.set_crossfade_toggle_A(button)
 
     def set_crossfader_buttons_B(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.CrossOn', 'Mixer.CrossOff')
+                button.set_on_off_values('Color.CrossOn', 'Color.CrossOff')
             strip.set_crossfade_toggle_B(button)
 
     def set_send_select_buttons(self, buttons):
@@ -224,7 +224,7 @@ class MixerComponent(MixerComponentBase):
     def set_track_activate_send_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.TrackActivateSendButtonOn', 'Mixer.TrackActivateSendButtonOff')
+                button.set_on_off_values('Color.TrackActivatedSend', 'Color.TrackUnactivatedSend')
             strip.set_track_activate_send(button)
 
     def set_tracks_activate_send_button(self, button):
@@ -234,9 +234,9 @@ class MixerComponent(MixerComponentBase):
         if button:
             self.tracks_activate_send_button.set_control_element(button)
             if ALL_TRACK_ACTIVATORS == False:
-                self.tracks_activate_send_button.color = "Mixer.TracksActivateSendButtonOff"
+                self.tracks_activate_send_button.color = "Color.TracksUnactivatedSend"
             else:
-                self.tracks_activate_send_button.color = "Mixer.TracksActivateSendButtonOn"
+                self.tracks_activate_send_button.color = "Color.TracksActivatedSend"
             self.tracks_activate_send_button.enabled = True
 
     def set_switch_sends_button(self, button):
@@ -262,23 +262,23 @@ class MixerComponent(MixerComponentBase):
     def set_crossfader_control_light(self, button):
         if button:
             self.crossfader_control_light.set_control_element(button)
-            self.crossfader_control_light.color = "Mixer.CrossControl"
+            self.crossfader_control_light.color = "Color.CrossControl"
             self.crossfader_control_light.enabled = True
 
     def set_tempo_control_light(self, button):
         if button:
             self.tempo_control_light.set_control_element(button)
-            self.tempo_control_light.color = "Mixer.TempoControl"
+            self.tempo_control_light.color = "Color.TempoControl"
             self.tempo_control_light.enabled = True
 
     def set_prehear_volume_light(self, button):
         if button:
             self.prehear_volume_light.set_control_element(button)
-            self.prehear_volume_light.color = "Mixer.PrehearVolume"
+            self.prehear_volume_light.color = "Color.PrehearVolume"
             self.prehear_volume_light.enabled = True
 
     def set_master_volume_light(self, button):
         if button:
             self.master_volume_light.set_control_element(button)
-            self.master_volume_light.color = "Mixer.MasterVolume"
+            self.master_volume_light.color = "Color.MasterVolume"
             self.master_volume_light.enabled = True

@@ -11,9 +11,9 @@ from _Framework.DeviceComponent import DeviceComponent as DeviceComponentBase
 from _Framework.ModesComponent import EnablingModesComponent, tomode
 
 class DeviceComponent(DeviceComponentBase):
-    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Mixer.Parameters', disabled_color='Device.NoDevice')
-    prev_device_button = ButtonControl(color='Mixer.PrevDevice')
-    next_device_button = ButtonControl(color='Mixer.NextDevice')
+    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Color.DeviceControl', disabled_color='Color.Off')
+    prev_device_button = ButtonControl(color='Color.NavLeft')
+    next_device_button = ButtonControl(color='Color.NavRight')
 
     @prev_device_button.pressed
     def prev_device_button(self, button):
@@ -36,7 +36,7 @@ class DeviceComponent(DeviceComponentBase):
     def set_bank_buttons(self, buttons):
         for button in buttons or []:
             if button:
-                button.set_on_off_values('Mixer.DeviceOn', 'Mixer.DeviceOff')
+                button.set_on_off_values('Color.NavDown', 'Color.Off')
 
         super(DeviceComponent, self).set_bank_buttons(buttons)
 
@@ -67,5 +67,5 @@ class DeviceModeComponent(EnablingModesComponent):
         self._device_settings_mode.leave_mode()
 
     def _update_buttons(self, selected_mode):
-        self.device_mode_button.color = 'DefaultButton.On' if selected_mode == 'enabled' else 'DefaultButton.Off'
+        self.device_mode_button.color = 'Color.NavRight' if selected_mode == 'enabled' else 'Color.Off'
         super(DeviceModeComponent, self)._update_buttons(selected_mode)
