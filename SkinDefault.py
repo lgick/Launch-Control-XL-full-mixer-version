@@ -28,9 +28,12 @@ class BiLedColors:
         Play = Color(60)
 
         ResetDevice = Color(15)
-        OnOffDevice = Color(15)
+        DeviceOn = Color(15)
+        DeviceOff = Color(12)
         PrevDevice = Color(15)
         NextDevice = Color(15)
+
+        Parameters = Color(15)
 
         TrackActivateSendButtonOff = Color(29)
         TrackActivateSendButtonOn = Color(60)
@@ -58,10 +61,7 @@ class BiLedColors:
         MasterVolume = Color(60)
 
     class Device:
-        Parameters = Color(15)
         NoDevice = Color(13)
-        BankSelected = Color(15)
-        BankUnselected = Color(0)
 
 
 def make_biled_skin():

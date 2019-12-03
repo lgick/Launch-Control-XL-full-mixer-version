@@ -11,9 +11,9 @@ from _Framework.DeviceComponent import DeviceComponent as DeviceComponentBase
 from _Framework.ModesComponent import EnablingModesComponent, tomode
 
 class DeviceComponent(DeviceComponentBase):
-    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Device.Parameters', disabled_color='Device.NoDevice')
-    prev_device_button = ButtonControl(color='DefaultButton.On')
-    next_device_button = ButtonControl(color='DefaultButton.On')
+    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Mixer.Parameters', disabled_color='Device.NoDevice')
+    prev_device_button = ButtonControl(color='Mixer.PrevDevice')
+    next_device_button = ButtonControl(color='Mixer.NextDevice')
 
     @prev_device_button.pressed
     def prev_device_button(self, button):
@@ -36,7 +36,7 @@ class DeviceComponent(DeviceComponentBase):
     def set_bank_buttons(self, buttons):
         for button in buttons or []:
             if button:
-                button.set_on_off_values('Device.BankSelected', 'Device.BankUnselected')
+                button.set_on_off_values('Mixer.DeviceOn', 'Mixer.DeviceOff')
 
         super(DeviceComponent, self).set_bank_buttons(buttons)
 
