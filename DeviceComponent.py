@@ -11,7 +11,7 @@ from _Framework.DeviceComponent import DeviceComponent as DeviceComponentBase
 from _Framework.ModesComponent import EnablingModesComponent, tomode
 
 class DeviceComponent(DeviceComponentBase):
-    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Color.DeviceControl', disabled_color='Color.Off')
+    parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Color.DeviceControlOn', disabled_color='Color.DeviceControlOff')
     prev_device_button = ButtonControl(color='Color.NavLeft')
     next_device_button = ButtonControl(color='Color.NavRight')
 

@@ -20,7 +20,8 @@ class BiLedColors:
         VolumeSendsA = Color(62)
         VolumeSendsB = Color(62)
 
-        DeviceControl = Color(15)
+        DeviceControlOn = Color(15)
+        DeviceControlOff = Color(13)
 
         CrossControl = Color(60)
         TempoControl = Color(12)
@@ -42,8 +43,8 @@ class BiLedColors:
         SendSelected = Color(58)
         SendUnselected = Color(29)
 
-        MasterSelected = Color(58)
-        MasterUnselected = Color(29)
+        MasterSelected = Color(15)
+        MasterUnselected = Color(13)
 
 
         # Mute mode

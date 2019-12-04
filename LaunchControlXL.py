@@ -188,7 +188,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._switch_sends_button =  make_button(91, 'Switch_Sends_Button', MIDI_NOTE_TYPE)
         self._tracks_activate_send_button =  make_button(92, 'Tracks_Activate_Send_Button', MIDI_NOTE_TYPE)
 
-        self._master_select_button =  make_button(91, 'Master_Select_Button', MIDI_NOTE_TYPE)
+        self._master_select_button =  make_button(92, 'Master_Select_Button', MIDI_NOTE_TYPE)
 
         self._up_button = make_button(104, 'Up')
         self._down_button = make_button(105, 'Down')
