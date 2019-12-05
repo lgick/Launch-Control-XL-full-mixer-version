@@ -6,10 +6,10 @@
 # Compiled at: 2019-04-09 19:23:44
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
+from ableton.v2.base import listens, liveobj_valid
 from _Framework.Control import control_list, ButtonControl
 from _Framework.ChannelStripComponent import ChannelStripComponent as ChannelStripComponentBase
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
-from ableton.v2.base import listens, liveobj_valid
 import Live
 
 TRACK_ACTIVATORS = {}
@@ -149,11 +149,17 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
 
 class MixerComponent(MixerComponentBase):
+    master_select_button = ButtonControl()
     tracks_activate_send_button = ButtonControl()
     crossfader_control_light = ButtonControl()
     tempo_control_light = ButtonControl()
     prehear_volume_light = ButtonControl()
     master_volume_light = ButtonControl()
+
+    @master_select_button.pressed
+    def master_select_button(self, button):
+        if self.song().view.selected_track != self.song().master_track:
+            self.song().view.selected_track = self.song().master_track
 
     @tracks_activate_send_button.pressed
     def tracks_activate_send_button(self, button):
@@ -181,6 +187,14 @@ class MixerComponent(MixerComponentBase):
 
     def __init__(self, *a, **k):
         super(MixerComponent, self).__init__(*a, **k)
+
+    def on_selected_track_changed(self):
+        MixerComponentBase.on_selected_track_changed(self)
+        if self.song().view.selected_track != self.song().master_track:
+            self.master_select_button.color = 'Color.MasterUnselected'
+        else:
+            self.master_select_button.color = 'Color.MasterSelected'
+        return
 
     def _create_strip(self):
         return ChannelStripComponent()
@@ -219,7 +233,16 @@ class MixerComponent(MixerComponentBase):
         return True
 
     def set_master_select_button(self, button):
-        return True
+        self.master_select_button.set_control_element(None)
+
+        if button:
+            self.master_select_button.set_control_element(button)
+
+            if self.song().view.selected_track != self.song().master_track:
+                self.master_select_button.color = 'Color.MasterUnselected'
+            else:
+                self.master_select_button.color = 'Color.MasterSelected'
+            self.master_select_button.enabled = True
 
     def set_track_activate_send_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
