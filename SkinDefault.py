@@ -10,6 +10,7 @@ from _Framework.ButtonElement import Color
 
 class BiLedColors:
     class Color:
+        On = Color(127)
         Off = Color(0)
 
 
@@ -24,7 +25,7 @@ class BiLedColors:
         DeviceControlOff = Color(13)
 
         CrossControl = Color(60)
-        TempoControl = Color(12)
+        TempoControl = Color(60)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 
@@ -45,6 +46,15 @@ class BiLedColors:
 
         MasterSelected = Color(15)
         MasterUnselected = Color(13)
+
+        DeviceOn = Color(15)
+        DeviceOff = Color(13)
+
+        LockOn = Color(63)
+        LockOff = Color(29)
+
+        PrevDevice = Color(60)
+        NextDevice = Color(60)
 
 
         # Mute mode
