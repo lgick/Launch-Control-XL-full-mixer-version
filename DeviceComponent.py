@@ -11,8 +11,36 @@ from _Framework.DeviceComponent import DeviceComponent as DeviceComponentBase
 
 class DeviceComponent(DeviceComponentBase):
     parameter_lights = control_list(ButtonControl, control_count=8, enabled=False, color='Color.DeviceControlOn', disabled_color='Color.DeviceControlOff')
-    prev_device_button = ButtonControl(color='Color.PrevDevice')
-    next_device_button = ButtonControl(color='Color.NextDevice')
+    prev_device_button = ButtonControl()
+    next_device_button = ButtonControl()
+    reset_device_button = ButtonControl()
+
+    def clear_buttons(self):
+        self.prev_device_button.color = 'Color.Off'
+        self.next_device_button.color = 'Color.Off'
+        self.reset_device_button.color = 'Color.Off'
+        self.prev_device_button.set_control_element(None)
+        self.next_device_button.set_control_element(None)
+        self.reset_device_button.set_control_element(None)
+
+    def set_prev_device_button(self, button):
+        if button:
+            self.prev_device_button.set_control_element(button)
+            self.prev_device_button.color = 'Color.PrevDevice'
+
+    def set_next_device_button(self, button):
+        if button:
+            self.next_device_button.set_control_element(button)
+            self.next_device_button.color = 'Color.NextDevice'
+
+    def set_reset_device_button(self, button):
+        if button:
+            self.reset_device_button.set_control_element(button)
+            self.reset_device_button.color = 'Color.On'
+
+    @reset_device_button.pressed
+    def reset_device_button(self, button):
+        pass
 
     @prev_device_button.pressed
     def prev_device_button(self, button):
@@ -25,17 +53,14 @@ class DeviceComponent(DeviceComponentBase):
     def set_on_off_button(self, button):
         if button:
             button.set_on_off_values('Color.DeviceOn', 'Color.DeviceOff')
-            self._on_off_button = button
-            self._on_off_button_slot.subject = button
-            self._update_on_off_button()
+
+        super(DeviceComponent, self).set_on_off_button(button)
 
     def set_lock_button(self, button):
         if button:
             button.set_on_off_values('Color.LockOn', 'Color.LockOff')
-            self._lock_button = button
-            self._lock_button_slot.subject = button
-            self._update_lock_button()
-            return
+
+        super(DeviceComponent, self).set_lock_button(button)
 
     def _scroll_device_view(self, direction):
         self.application().view.show_view('Detail')
