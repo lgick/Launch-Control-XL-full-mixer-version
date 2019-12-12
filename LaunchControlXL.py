@@ -13,7 +13,7 @@ from _Framework.EncoderElement import EncoderElement
 from _Framework.IdentifiableControlSurface import IdentifiableControlSurface
 from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from _Framework.Layer import Layer
-from _Framework.ModesComponent import ModesComponent as ModesComponentBase, AddLayerMode, ReenterBehaviour
+from _Framework.ModesComponent import ReenterBehaviour as ReenterBehaviourBase, ModesComponent as ModesComponentBase, AddLayerMode
 from _Framework.SessionComponent import SessionComponent
 from _Framework.TransportComponent import TransportComponent
 from _Framework.SliderElement import SliderElement
@@ -35,15 +35,54 @@ NUM_SCENES = 1
 LIVE_CHANNEL = 8
 PREFIX_TEMPLATE_SYSEX = (240, 0, 32, 41, 2, 17, 119)
 LIVE_TEMPLATE_SYSEX = PREFIX_TEMPLATE_SYSEX + (LIVE_CHANNEL, 247)
+TIMER_BLINK = 200
+
+class ReenterBehaviour(ReenterBehaviourBase):
+    def update_button(self, component, mode, selected_mode):
+        button = component.get_mode_button(mode)
+        groups = component.get_mode_groups(mode)
+        selected_groups = component.get_mode_groups(selected_mode)
+        button.set_light(mode == selected_mode or bool(groups & selected_groups))
 
 class ModesComponent(ModesComponentBase):
+    timer = None
+    light_select = False
+    button = None
+
+    def __init__(self, mixer, device, *a, **k):
+        super(ModesComponent, self).__init__(*a, **k)
+        self._mixer = mixer
+        self._device = device
+
+    def _do_enter_mode(self, name):
+        self._mixer.clear_buttons()
+        self._device.clear_buttons()
+        super(ModesComponent, self)._do_enter_mode(name)
+
+    def blink(self):
+        self.light_select = not self.light_select
+        self.button.set_light(self.light_select)
+
+    def disconnect(self):
+        super(ModesComponent, self).disconnect()
+        if self.timer:
+            self.timer.stop()
+            self.timer = None
+        self.light_select = False
+        return
+
     def _update_buttons(self, selected):
         super(ModesComponent, self)._update_buttons(selected)
 
-    def pop_mode(self, mode):
-        self._mode_stack.release(mode)
-        #self._update_buttons(mode)
-        #component.get_mode_button('device').set_light('Color.On')
+        if self.timer:
+            self.timer.stop()
+
+        if self.is_enabled():
+            if selected != None and selected.find('detail') is not -1:
+                self.button = self.get_mode_button(selected.replace('_detail', ''))
+                self.blink()
+                self.timer = Live.Base.Timer(callback=self.blink, interval=TIMER_BLINK, repeat=True)
+                self.timer.start()
 
 class LaunchControlXL(IdentifiableControlSurface):
     def __init__(self, c_instance, *a, **k):
@@ -71,7 +110,7 @@ class LaunchControlXL(IdentifiableControlSurface):
             self.set_device_component(device)
             self.set_highlighting_session_component(session)
 
-            mixer_modes = ModesComponent()
+            mixer_modes = ModesComponent(mixer, device)
 
             set_main_mode = partial(setattr, mixer_modes, 'selected_mode')
 
@@ -92,8 +131,9 @@ class LaunchControlXL(IdentifiableControlSurface):
                  parameter_lights=self._device_controls_lights,
                  prev_device_button=self._button_9,
                  next_device_button=self._button_10,
+                 reset_device_button=self._button_11,
                  on_off_button=self._button_1,
-                 lock_button=self._button_5
+                 lock_button=self._button_2
                  )),
              AddLayerMode(mixer, Layer()),
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'device')))
@@ -107,7 +147,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                  mute_buttons=self._state_buttons1,
                  solo_buttons=self._state_buttons2
                  ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'session_detail')))
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mute_detail')))
 
             #play_button=self._play_button,
             #stop_button=self._stop_button,
@@ -119,12 +159,12 @@ class LaunchControlXL(IdentifiableControlSurface):
             #overdub_button=self._overdub_button,
             #metronome_button=self._metronome_button
 
-            mixer_modes.add_mode('session_detail', [
+            mixer_modes.add_mode('mute_detail', [
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
                  )),
-             AddLayerMode(mixer, Layer()),
+             #AddLayerMode(mixer, Layer()),
              AddLayerMode(transport, Layer(
                  nudge_up_button=self._button_1,
                  nudge_down_button=self._button_2,
@@ -164,7 +204,6 @@ class LaunchControlXL(IdentifiableControlSurface):
                     )
 
             mixer_modes.selected_mode = 'device'
-
 
     def _create_controls(self):
 
