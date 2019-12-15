@@ -13,10 +13,20 @@ class BiLedColors:
         On = Color(127)
         Off = Color(0)
 
+        #13 - red l
+        #15 - red h
+
+        #29 - yellow l
+        #62 - yellow h
+
+        #47 - amber
+
+        #28 - green l
+        #60 - green h
 
         #controls
-        SendsA = Color(63)
-        SendsB = Color(15)
+        SendsA = Color(47)
+        SendsB = Color(13)
 
         VolumeSendsA = Color(62)
         VolumeSendsB = Color(62)
@@ -71,9 +81,6 @@ class BiLedColors:
 
         SendMuteOn = Color(60)
         SendMuteOff = Color(28)
-
-        SendSideA = Color(15)
-        SendSideB = Color(60)
 
         TracksActivatedSend = Color(60)
         TracksUnactivatedSend = Color(29)

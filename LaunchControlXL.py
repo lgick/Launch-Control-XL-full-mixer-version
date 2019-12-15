@@ -121,6 +121,8 @@ class LaunchControlXL(IdentifiableControlSurface):
                  )),
              AddLayerMode(mixer, Layer(
                  track_select_buttons=self._state_buttons1,
+                 send_select_buttons=self._state_buttons3,
+                 switch_sends_button=self._button_15,
                  master_select_button=self._button_16
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'device_detail')))
@@ -135,7 +137,6 @@ class LaunchControlXL(IdentifiableControlSurface):
                  on_off_button=self._button_1,
                  lock_button=self._button_2
                  )),
-             AddLayerMode(mixer, Layer()),
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'device')))
 
             mixer_modes.add_mode('mute', [
@@ -149,22 +150,17 @@ class LaunchControlXL(IdentifiableControlSurface):
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mute_detail')))
 
-            #play_button=self._play_button,
-            #stop_button=self._stop_button,
-            #record_button=self._record_button,
-            #nudge_up_button=self._nudge_up_button,
-            #nudge_down_button=self._nudge_down_button,
-            #tap_tempo_button=self._tap_tempo_button,
-            #quant_toggle_button=self._rec_quantization_button,
-            #overdub_button=self._overdub_button,
-            #metronome_button=self._metronome_button
-
             mixer_modes.add_mode('mute_detail', [
+             AddLayerMode(session, Layer(
+                 select_prev_button=self._button_5,
+                 select_next_button=self._button_6,
+                 track_bank_left_button=self._button_7,
+                 track_bank_right_button=self._button_8
+                 )),
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
                  )),
-             #AddLayerMode(mixer, Layer()),
              AddLayerMode(transport, Layer(
                  nudge_up_button=self._button_1,
                  nudge_down_button=self._button_2,
@@ -272,6 +268,8 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._master_volume_light = make_button(127, 'Master_Volume_Light', MIDI_NOTE_TYPE)
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
+
+        #self._send_controls = [13, 14, 29, 30, 49, 50]
 
         self._send_controls = ButtonMatrixElement(rows=[[
             make_encoder(13, 'Send_Control_1'),
