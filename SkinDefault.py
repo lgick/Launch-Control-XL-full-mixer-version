@@ -79,8 +79,8 @@ class BiLedColors:
         TrackActivatedSend = Color(60)
         TrackUnactivatedSend = Color(29)
 
-        SendMuteOn = Color(60)
-        SendMuteOff = Color(28)
+        SendMuteOn = Color(28)
+        SendMuteOff = Color(60)
 
         TracksActivatedSend = Color(60)
         TracksUnactivatedSend = Color(29)

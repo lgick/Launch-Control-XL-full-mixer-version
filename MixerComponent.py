@@ -153,6 +153,7 @@ class MixerComponent(MixerComponentBase):
     master_volume_light = ButtonControl()
     switch_sends = 'A'
     switch_sends_button = ButtonControl()
+    send_buttons_mode = 'select'
     send_buttons = control_list(ButtonControl, control_count=6)
     send_volumes = control_list(EncoderControl, control_count=6)
     send_volumes_lights = control_list(ButtonControl, control_count=6)
@@ -179,7 +180,18 @@ class MixerComponent(MixerComponentBase):
 
     @send_buttons.pressed
     def send_buttons(self, button):
-        pass
+        if self.switch_sends == 'A':
+            index = button.index
+        elif self.switch_sends == 'B':
+            index = 6 + button.index
+
+        if index < len(self.song().return_tracks):
+            if self.send_buttons_mode == 'select':
+                self.song().view.selected_track = self.song().return_tracks[index]
+            elif self.send_buttons_mode == 'mute':
+                self.song().return_tracks[index].mute = not self.song().return_tracks[index].mute
+
+            self.on_return_tracks_changed()
 
     @switch_sends_button.pressed
     def switch_sends_button(self, button):
@@ -225,7 +237,14 @@ class MixerComponent(MixerComponentBase):
     def on_selected_track_changed(self):
         MixerComponentBase.on_selected_track_changed(self)
         self.on_master_selected_track_changed()
+        self.on_return_tracks_changed()
         return
+
+    def on_master_selected_track_changed(self):
+        if self.song().view.selected_track != self.song().master_track:
+            self.master_select_button.color = 'Color.MasterUnselected'
+        else:
+            self.master_select_button.color = 'Color.MasterSelected'
 
     def on_track_list_changed(self):
         MixerComponentBase.on_track_list_changed(self)
@@ -234,14 +253,17 @@ class MixerComponent(MixerComponentBase):
 
     def on_return_tracks_changed(self):
         length = len(self.song().return_tracks)
+        return_tracks = self.song().return_tracks
 
         if length > 6:
             if self.switch_sends == 'A':
                 side_len = 6
+                i_plus = 0
                 send_color = 'Color.SendsA'
                 volume_color = 'Color.VolumeSendsA'
             elif self.switch_sends == 'B':
                 side_len = length - 6
+                i_plus = 6
                 send_color = 'Color.SendsB'
                 volume_color = 'Color.VolumeSendsB'
 
@@ -251,10 +273,11 @@ class MixerComponent(MixerComponentBase):
                 if i < side_len:
                     self.send_controls_lights[i].color = send_color
                     self.send_volumes_lights[i].color = volume_color
+                    self.set_send_button_light(return_tracks[i + i_plus], i)
                 else:
                     self.send_volumes_lights[i].color = 'Color.Off'
                     self.send_controls_lights[i].color = 'Color.Off'
-
+                    self.send_buttons[i].color = 'Color.Off'
         else:
             self.switch_sends = 'A'
             self.switch_sends_button.color = 'Color.Off'
@@ -263,24 +286,51 @@ class MixerComponent(MixerComponentBase):
                 if i < length:
                     self.send_controls_lights[i].color = 'Color.SendsA'
                     self.send_volumes_lights[i].color = 'Color.VolumeSendsA'
+                    self.set_send_button_light(return_tracks[i], i)
+
                 else:
                     self.send_volumes_lights[i].color = 'Color.Off'
                     self.send_controls_lights[i].color = 'Color.Off'
+                    self.send_buttons[i].color = 'Color.Off'
+
+    def set_send_button_light(self, track, index):
+        if self.send_buttons_mode == 'select':
+            if self.song().view.selected_track == track:
+                self.send_buttons[index].color = 'Color.TrackSelected'
+            else:
+                self.send_buttons[index].color = 'Color.TrackUnselected'
+
+        elif self.send_buttons_mode == 'mute':
+            if track.mute:
+                self.send_buttons[index].color = 'Color.SendMuteOn'
+            else:
+                self.send_buttons[index].color = 'Color.SendMuteOff'
 
 
-    def on_master_selected_track_changed(self):
-        if self.song().view.selected_track != self.song().master_track:
-            self.master_select_button.color = 'Color.MasterUnselected'
-        else:
-            self.master_select_button.color = 'Color.MasterSelected'
 
 
 
 
 
-    def set_send_select_buttons(self, buttons):
-        self.send_buttons.set_control_element(buttons)
-        #[]count = len(self.song().return_tracks)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def set_send_controls(self, controls):
+        self.send_controls.set_control_element(controls)
 
         #[]for strip, control in izip_longest(self._channel_strips, controls or []):
 
@@ -289,15 +339,6 @@ class MixerComponent(MixerComponentBase):
         #[]for index in xrange(6):
         #[]    self._encoder_modes.set_mode_enabled('send_%d_mode' % (index,), True if index < num_sends else False)
         #return True
-
-    def set_send_mute_buttons(self, buttons):
-        self.send_buttons.set_control_element(buttons)
-
-
-
-
-    def set_send_controls(self, controls):
-        self.send_controls.set_control_element(controls)
 
         #controls[0].connect_to(self.song().tracks[0].mixer_device.sends[0])
         #controls[1].connect_to(self.song().tracks[1].mixer_device.sends[0])
@@ -316,6 +357,35 @@ class MixerComponent(MixerComponentBase):
                 strip.set_send_controls((None, ) * self._send_index + (control,))
         return
 
+    def set_send_volumes(self, controls):
+        self.send_volumes.set_control_element(controls)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def set_send_select_buttons(self, buttons):
+        self.send_buttons_mode = 'select'
+        self.send_buttons.set_control_element(buttons)
+        self.on_return_tracks_changed()
+
+    def set_send_mute_buttons(self, buttons):
+        self.send_buttons_mode = 'mute'
+        self.send_buttons.set_control_element(buttons)
+        self.on_return_tracks_changed()
+
     def set_switch_sends_button(self, button):
         self.switch_sends_button.set_control_element(button)
         self.on_return_tracks_changed()
@@ -324,29 +394,9 @@ class MixerComponent(MixerComponentBase):
         self.send_controls_lights.set_control_element(controls)
         self.on_return_tracks_changed()
 
-    def set_send_volumes(self, controls):
-        self.send_volumes.set_control_element(controls)
-
     def set_send_volumes_lights(self, controls):
         self.send_volumes_lights.set_control_element(controls)
         self.on_return_tracks_changed()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def set_track_select_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
