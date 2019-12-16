@@ -271,15 +271,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self.send_controls = [13, 14, 29, 30, 49, 50]
 
-        #self.send_controls = ButtonMatrixElement(rows=[[
-        #    make_encoder(13, 'Send_Control_1'),
-        #    make_encoder(14, 'Send_Control_2'),
-        #    make_encoder(29, 'Send_Control_3'),
-        #    make_encoder(30, 'Send_Control_4'),
-        #    make_encoder(49, 'Send_Control_5'),
-        #    make_encoder(50, 'Send_Control_6')
-        #    ]])
-
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
           13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
