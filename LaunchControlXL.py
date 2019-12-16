@@ -269,22 +269,22 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
-        #self._send_controls = [13, 14, 29, 30, 49, 50]
+        self.send_controls = [13, 14, 29, 30, 49, 50]
 
-        self._send_controls = ButtonMatrixElement(rows=[[
-            make_encoder(13, 'Send_Control_1'),
-            make_encoder(14, 'Send_Control_2'),
-            make_encoder(29, 'Send_Control_3'),
-            make_encoder(30, 'Send_Control_4'),
-            make_encoder(49, 'Send_Control_5'),
-            make_encoder(50, 'Send_Control_6')
-            ]])
+        #self.send_controls = ButtonMatrixElement(rows=[[
+        #    make_encoder(13, 'Send_Control_1'),
+        #    make_encoder(14, 'Send_Control_2'),
+        #    make_encoder(29, 'Send_Control_3'),
+        #    make_encoder(30, 'Send_Control_4'),
+        #    make_encoder(49, 'Send_Control_5'),
+        #    make_encoder(50, 'Send_Control_6')
+        #    ]])
 
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
           13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
 
-        self._send_volumes = ButtonMatrixElement(rows=[[
+        self.send_volumes = ButtonMatrixElement(rows=[[
             make_encoder(15, 'Send_Volume_1'),
             make_encoder(16, 'Send_Volume_2'),
             make_encoder(31, 'Send_Volume_3'),
@@ -326,12 +326,16 @@ class LaunchControlXL(IdentifiableControlSurface):
         return device
 
     def _create_mixer(self):
-        mixer = MixerComponent(NUM_TRACKS, is_enabled=True, auto_name=True)
+        mixer = MixerComponent(
+                self.send_volumes,
+                self.send_controls,
+                NUM_TRACKS,
+                is_enabled=True,
+                auto_name=True
+                )
         mixer.layer = Layer(
                 volume_controls=self._volume_faders,
-                send_controls=self._send_controls,
                 send_controls_lights=self._send_controls_lights,
-                send_volumes=self._send_volumes,
                 send_volumes_lights=self._send_volumes_lights,
                 crossfader_control_light=self._crossfader_control_light,
                 tempo_control_light=self._tempo_control_light,

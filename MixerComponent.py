@@ -12,8 +12,8 @@ from _Framework.ChannelStripComponent import ChannelStripComponent as ChannelStr
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 import Live
 
-#import functools, logging, traceback
-#logger = logging.getLogger(__name__)
+import functools, logging, traceback
+logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
 TRACK_ACTIVATORS = {}
@@ -155,12 +155,12 @@ class MixerComponent(MixerComponentBase):
     switch_sends_button = ButtonControl()
     send_buttons_mode = 'select'
     send_buttons = control_list(ButtonControl, control_count=6)
-    send_volumes = control_list(EncoderControl, control_count=6)
     send_volumes_lights = control_list(ButtonControl, control_count=6)
-    send_controls = control_list(EncoderControl, control_count=6)
     send_controls_lights = control_list(ButtonControl, control_count=6)
 
-    def __init__(self, *a, **k):
+    def __init__(self, send_volumes=None, send_controls=None, *a, **k):
+        self.send_volumes = send_volumes
+        self.send_controls = send_controls
         super(MixerComponent, self).__init__(*a, **k)
 
     def _create_strip(self):
@@ -274,10 +274,12 @@ class MixerComponent(MixerComponentBase):
                     self.send_controls_lights[i].color = send_color
                     self.send_volumes_lights[i].color = volume_color
                     self.set_send_button_light(return_tracks[i + i_plus], i)
+                    self.send_volumes[i].connect_to(return_tracks[i + i_plus].mixer_device.volume)
                 else:
                     self.send_volumes_lights[i].color = 'Color.Off'
                     self.send_controls_lights[i].color = 'Color.Off'
                     self.send_buttons[i].color = 'Color.Off'
+                    self.send_volumes[i].release_parameter()
         else:
             self.switch_sends = 'A'
             self.switch_sends_button.color = 'Color.Off'
@@ -287,11 +289,12 @@ class MixerComponent(MixerComponentBase):
                     self.send_controls_lights[i].color = 'Color.SendsA'
                     self.send_volumes_lights[i].color = 'Color.VolumeSendsA'
                     self.set_send_button_light(return_tracks[i], i)
-
+                    self.send_volumes[i].connect_to(return_tracks[i].mixer_device.volume)
                 else:
                     self.send_volumes_lights[i].color = 'Color.Off'
                     self.send_controls_lights[i].color = 'Color.Off'
                     self.send_buttons[i].color = 'Color.Off'
+                    self.send_volumes[i].release_parameter()
 
     def set_send_button_light(self, track, index):
         if self.send_buttons_mode == 'select':
@@ -320,17 +323,8 @@ class MixerComponent(MixerComponentBase):
 
 
 
-
-
-
-
-
-
-
-
-
     def set_send_controls(self, controls):
-        self.send_controls.set_control_element(controls)
+        #self.send_controls.set_control_element(controls)
 
         #[]for strip, control in izip_longest(self._channel_strips, controls or []):
 
@@ -357,8 +351,12 @@ class MixerComponent(MixerComponentBase):
                 strip.set_send_controls((None, ) * self._send_index + (control,))
         return
 
-    def set_send_volumes(self, controls):
-        self.send_volumes.set_control_element(controls)
+
+
+
+
+
+
 
 
 
