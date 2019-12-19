@@ -19,35 +19,20 @@ import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
-TRACK_ACTIVATORS = {}
-ALL_TRACK_ACTIVATORS = False
-
 class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
-        self._track_activate_send_button = None
         self._controls = None
         self._sends_mode = 'A'
+        self._sends_active = False
 
         def make_button_slot(name):
             return self.register_slot(None, getattr(self, '_%s_value' % name), 'value')
 
         self._crossfade_toggle_slot_A = make_button_slot('crossfade_toggle_A')
         self._crossfade_toggle_slot_B = make_button_slot('crossfade_toggle_B')
-        self._track_activate_send_button_slot = make_button_slot('track_activate')
-
-    def _track_activate_value(self, value):
-        if self.is_enabled():
-            if liveobj_valid(self._track):
-                if value != 0:
-                    if self.get_track_activate() == 1:
-                        self.set_track_activate(0)
-                    else:
-                        self.set_track_activate(1)
-
-                    self._on_track_activate_changed()
 
     def _crossfade_toggle_A_value(self, value):
         if self.is_enabled():
@@ -69,43 +54,31 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     elif current == 1 or current == 0:
                         self._track.mixer_device.crossfade_assign = 2
 
-    def disconnect(self):
-        super(ChannelStripComponent, self).disconnect()
-
-        for button in [self._crossfade_toggle_A, self._crossfade_toggle_B, self._track_activate_send_button]:
+    def clear_buttons(self):
+        for button in [self._crossfade_toggle_A, self._crossfade_toggle_B]:
             if button != None:
                 button.reset()
 
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
-        self._track_activate_send_button = None
 
         if self._controls != None:
             for control in self._controls:
                 if control != None:
-                    control.reset()
+                    control.release_parameter()
 
             self._controls = None
 
+    def disconnect(self):
+        super(ChannelStripComponent, self).disconnect()
+        self.clear_buttons()
+
+    def _disconnect_parameters(self):
+        super(ChannelStripComponent, self)._disconnect_parameters()
+        self.clear_buttons()
+
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
-
-    def get_track_activate(self):
-        if liveobj_valid(self._track):
-            track_index = list(self.song().tracks).index(self._track)
-            if track_index not in TRACK_ACTIVATORS:
-                if ALL_TRACK_ACTIVATORS == True:
-                    TRACK_ACTIVATORS[track_index] = 1
-                else:
-                    TRACK_ACTIVATORS[track_index] = 0
-
-            return TRACK_ACTIVATORS[track_index]
-
-    def set_track_activate(self, value):
-        value = value or 0
-        if liveobj_valid(self._track) and self._track in self.song().tracks:
-            track_index = list(self.song().tracks).index(self._track)
-            TRACK_ACTIVATORS[track_index] = value
 
     def set_crossfade_toggle_A(self, button):
         if button != self._crossfade_toggle_A:
@@ -121,13 +94,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
             self._crossfade_toggle_slot_B.subject = button
             self.update()
 
-    def set_track_activate_send(self, button):
-        if button != self._track_activate_send_button:
-            self.reset_button_on_exchange(self._track_activate_send_button)
-            self._track_activate_send_button = button
-            self._track_activate_send_button_slot.subject = button
-            self.update()
-
     def set_send_controls(self, controls):
         self._controls = [
                 EncoderElement(MIDI_CC_TYPE, 8, controls[0], Live.MidiMap.MapMode.absolute),
@@ -138,49 +104,39 @@ class ChannelStripComponent(ChannelStripComponentBase):
                 EncoderElement(MIDI_CC_TYPE, 8, controls[5], Live.MidiMap.MapMode.absolute)
                 ]
 
-    def set_sends_mode(self, mode):
+    def sends_off(self):
+        if self._controls != None:
+            self._sends_active = False
+            for control in self._controls:
+                control.release_parameter()
+
+    def sends_on(self, mode):
         if liveobj_valid(self._track) and self._controls != None:
+            self._sends_active = True
             self._sends_mode = mode
 
-            if self.get_track_activate() == 1:
-                if mode == 'A':
-                    count = 0
-                    for control in self._controls:
-                        if count < len(self._track.mixer_device.sends):
-                            control.connect_to(self._track.mixer_device.sends[count])
-                        else:
-                            control.release_parameter()
-                        count += 1
-                elif mode == 'B':
-                    count = 6
-                    for control in self._controls:
-                        if count < len(self._track.mixer_device.sends):
-                            control.connect_to(self._track.mixer_device.sends[count])
-                        else:
-                            control.release_parameter()
-                        count += 1
-            else:
+            if mode == 'A':
+                count = 0
                 for control in self._controls:
-                    control.release_parameter()
+                    if count < len(self._track.mixer_device.sends):
+                        control.connect_to(self._track.mixer_device.sends[count])
+                    else:
+                        control.release_parameter()
+                    count += 1
+            elif mode == 'B':
+                count = 6
+                for control in self._controls:
+                    if count < len(self._track.mixer_device.sends):
+                        control.connect_to(self._track.mixer_device.sends[count])
+                    else:
+                        control.release_parameter()
+                    count += 1
+
+    def get_sends_status(self):
+        return self._sends_active
 
     def update(self):
         super(ChannelStripComponent, self).update()
-
-        if self.is_enabled():
-            self._on_track_activate_changed()
-
-    def _on_track_activate_changed(self):
-        if self.is_enabled() and self._track_activate_send_button:
-            if liveobj_valid(self._track):
-                if self.get_track_activate() == 1:
-                    self._track_activate_send_button.set_light(True)
-                else:
-                    self._track_activate_send_button.set_light(False)
-            else:
-                self._track_activate_send_button.set_light('Color.Off')
-
-        self.set_sends_mode(self._sends_mode)
-        return
 
     def _on_cf_assign_changed(self):
         if self.is_enabled() and self._crossfade_toggle_A and self._crossfade_toggle_B:
@@ -214,6 +170,10 @@ class MixerComponent(MixerComponentBase):
     send_buttons = control_list(ButtonControl, control_count=6)
     send_volumes_lights = control_list(ButtonControl, control_count=6)
     send_controls_lights = control_list(ButtonControl, control_count=6)
+    track_activate_send_buttons = control_list(ButtonControl, control_count=8)
+    track_activators = {}
+    all_track_activators = False
+    track_activators_list = []
 
     def __init__(self, send_volumes=None, send_controls=None, *a, **k):
         self.send_volumes = send_volumes
@@ -221,7 +181,8 @@ class MixerComponent(MixerComponentBase):
 
         for strip in self._channel_strips:
            strip.set_send_controls(send_controls)
-           strip.set_sends_mode(self.sends_mode)
+
+        self.update_sends()
 
     def _create_strip(self):
         return ChannelStripComponent()
@@ -231,12 +192,84 @@ class MixerComponent(MixerComponentBase):
             button.color = 'Color.Off'
             button.set_control_element(None)
 
+        for button in self.track_activate_send_buttons:
+            button.color = 'Color.Off'
+            button.set_control_element(None)
+
         self.switch_sends_button.color = 'Color.Off'
         self.switch_sends_button.set_control_element(None)
         self.master_select_button.color = 'Color.Off'
         self.master_select_button.set_control_element(None)
         self.tracks_activate_send_button.color = 'Color.Off'
         self.tracks_activate_send_button.set_control_element(None)
+
+    def update_sends(self):
+        tracks = self.song().tracks
+        self.all_track_activators = True
+
+        for strip, button in izip_longest(self._channel_strips, self.track_activate_send_buttons):
+            if strip._track in tracks:
+                index = list(tracks).index(strip._track)
+
+                if index in self.track_activators:
+                    if self.track_activators[index] == True:
+                        strip.sends_on(self.sends_mode)
+                        button.color = 'Color.TrackActivatedSend'
+                    else:
+                        strip.sends_off()
+                        button.color = 'Color.TrackUnactivatedSend'
+                        self.all_track_activators = False
+                else:
+                    self.track_activators[index] = False
+                    strip.sends_off()
+                    button.color = 'Color.TrackUnactivatedSend'
+                    self.all_track_activators = False
+            else:
+                button.color = 'Color.Off'
+
+        if self.all_track_activators == True:
+            self.tracks_activate_send_button.color = 'Color.TracksActivatedSend'
+        else:
+            self.tracks_activate_send_button.color = 'Color.TracksUnactivatedSend'
+
+    @track_activate_send_buttons.pressed
+    def track_activate_send_buttons(self, button):
+        button_index = button.index
+        tracks = self.song().tracks
+        strip = self._channel_strips[button_index]
+
+        if strip._track in tracks:
+            index = list(tracks).index(strip._track)
+
+        if self.track_activators[index] != True or self.track_activators[index] == True and len(self.track_activators) > 1:
+            self.track_activators[index] = True
+            self.track_activators_list.append(index)
+
+        for index in self.track_activators:
+            if index not in self.track_activators_list:
+                self.track_activators[index] = False
+
+        self.update_sends()
+
+    @track_activate_send_buttons.released
+    def track_activate_send_buttons(self, button):
+        button_index = button.index
+        tracks = self.song().tracks
+        strip = self._channel_strips[button_index]
+
+        if strip._track in tracks:
+            index = list(tracks).index(strip._track)
+
+        self.track_activators_list.remove(index)
+
+    @tracks_activate_send_button.pressed
+    def tracks_activate_send_button(self, button):
+        self.all_track_activators = not self.all_track_activators
+
+        for track in self.track_activators:
+            self.track_activators[track] = self.all_track_activators
+
+        self.update_sends()
 
     @send_buttons.pressed
     def send_buttons(self, button):
@@ -264,38 +297,12 @@ class MixerComponent(MixerComponentBase):
                 self.sends_mode = 'A'
 
             self.on_return_tracks_changed()
-
-            for strip in self._channel_strips:
-                strip.set_sends_mode(self.sends_mode)
+            self.update_sends()
 
     @master_select_button.pressed
     def master_select_button(self, button):
         if self.song().view.selected_track != self.song().master_track:
             self.song().view.selected_track = self.song().master_track
-
-    @tracks_activate_send_button.pressed
-    def tracks_activate_send_button(self, button):
-        global ALL_TRACK_ACTIVATORS
-        global TRACK_ACTIVATORS
-
-        if ALL_TRACK_ACTIVATORS == True:
-            ALL_TRACK_ACTIVATORS = False
-            self.tracks_activate_send_button.color = "Color.TracksUnactivatedSend"
-
-            for track_index in TRACK_ACTIVATORS:
-                TRACK_ACTIVATORS[track_index] = 0
-
-            for strip in self._channel_strips:
-                strip._on_track_activate_changed()
-        else:
-            ALL_TRACK_ACTIVATORS = True
-            self.tracks_activate_send_button.color = "Color.TracksActivatedSend"
-
-            for track_index in TRACK_ACTIVATORS:
-                TRACK_ACTIVATORS[track_index] = 1
-
-            for strip in self._channel_strips:
-                strip._on_track_activate_changed()
 
     def on_selected_track_changed(self):
         MixerComponentBase.on_selected_track_changed(self)
@@ -312,11 +319,7 @@ class MixerComponent(MixerComponentBase):
     def on_track_list_changed(self):
         MixerComponentBase.on_track_list_changed(self)
         self.on_return_tracks_changed()
-
-        for strip in self._channel_strips:
-            strip.set_sends_mode(self.sends_mode)
-
-        return
+        self.update_sends()
 
     def on_return_tracks_changed(self):
         length = len(self.song().return_tracks)
@@ -434,22 +437,34 @@ class MixerComponent(MixerComponentBase):
             self.on_master_selected_track_changed();
 
     def set_track_activate_send_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
-            if button:
-                button.set_on_off_values('Color.TrackActivatedSend', 'Color.TrackUnactivatedSend')
-            strip.set_track_activate_send(button)
+        if buttons:
+            tracks = self.song().tracks
+            self.track_activators = {}
+
+            for strip, track, button in izip_longest(self._channel_strips, self.track_activate_send_buttons, buttons):
+                track.set_control_element(button)
+
+                if strip._track in tracks:
+                    index = list(tracks).index(strip._track)
+                    self.track_activators[index] = strip.get_sends_status()
+
+            self.update_sends()
 
     def set_tracks_activate_send_button(self, button):
         self.tracks_activate_send_button.set_control_element(None)
-        global ALL_TRACK_ACTIVATORS
 
         if button:
+            tracks = self.song().tracks
+            self.all_track_activators = True
+
+            for strip in self._channel_strips:
+                if strip._track in tracks:
+                    index = list(tracks).index(strip._track)
+                    if index in self.track_activators and self.track_activators[index] == False:
+                        self.all_track_activators = False
+
             self.tracks_activate_send_button.set_control_element(button)
-            if ALL_TRACK_ACTIVATORS == False:
-                self.tracks_activate_send_button.color = "Color.TracksUnactivatedSend"
-            else:
-                self.tracks_activate_send_button.color = "Color.TracksActivatedSend"
-            self.tracks_activate_send_button.enabled = True
+            self.update_sends()
 
     def set_crossfader_control_light(self, button):
         if button:
