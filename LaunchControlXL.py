@@ -269,8 +269,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
-        self.send_controls = [13, 14, 29, 30, 49, 50]
-
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
           13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
@@ -319,7 +317,6 @@ class LaunchControlXL(IdentifiableControlSurface):
     def _create_mixer(self):
         mixer = MixerComponent(
                 self.send_volumes,
-                self.send_controls,
                 NUM_TRACKS,
                 is_enabled=True,
                 auto_name=True

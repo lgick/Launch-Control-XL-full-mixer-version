@@ -24,9 +24,16 @@ class ChannelStripComponent(ChannelStripComponentBase):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
-        self._controls = None
         self._sends_mode = 'A'
         self._sends_active = False
+        self._controls = [
+                EncoderElement(MIDI_CC_TYPE, 8, 13, Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, 14, Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, 29, Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, 30, Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, 49, Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, 50, Live.MidiMap.MapMode.absolute)
+                ]
 
         def make_button_slot(name):
             return self.register_slot(None, getattr(self, '_%s_value' % name), 'value')
@@ -62,12 +69,9 @@ class ChannelStripComponent(ChannelStripComponentBase):
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
 
-        if self._controls != None:
-            for control in self._controls:
-                if control != None:
-                    control.release_parameter()
-
-            self._controls = None
+        for control in self._controls:
+            if control != None:
+                control.release_parameter()
 
     def disconnect(self):
         super(ChannelStripComponent, self).disconnect()
@@ -94,24 +98,13 @@ class ChannelStripComponent(ChannelStripComponentBase):
             self._crossfade_toggle_slot_B.subject = button
             self.update()
 
-    def set_send_controls(self, controls):
-        self._controls = [
-                EncoderElement(MIDI_CC_TYPE, 8, controls[0], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, controls[1], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, controls[2], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, controls[3], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, controls[4], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, controls[5], Live.MidiMap.MapMode.absolute)
-                ]
-
     def sends_off(self):
-        if self._controls != None:
-            self._sends_active = False
-            for control in self._controls:
-                control.release_parameter()
+        self._sends_active = False
+        for control in self._controls:
+            control.release_parameter()
 
     def sends_on(self, mode):
-        if liveobj_valid(self._track) and self._controls != None:
+        if liveobj_valid(self._track):
             self._sends_active = True
             self._sends_mode = mode
 
@@ -175,14 +168,9 @@ class MixerComponent(MixerComponentBase):
     all_track_activators = False
     track_activators_list = []
 
-    def __init__(self, send_volumes=None, send_controls=None, *a, **k):
+    def __init__(self, send_volumes=None, *a, **k):
         self.send_volumes = send_volumes
         super(MixerComponent, self).__init__(*a, **k)
-
-        for strip in self._channel_strips:
-           strip.set_send_controls(send_controls)
-
-        self.update_sends()
 
     def _create_strip(self):
         return ChannelStripComponent()
