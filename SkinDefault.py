@@ -60,9 +60,6 @@ class BiLedColors:
         DeviceOn = Color(15)
         DeviceOff = Color(13)
 
-        LockOn = Color(63)
-        LockOff = Color(29)
-
         PrevDevice = Color(60)
         NextDevice = Color(60)
 

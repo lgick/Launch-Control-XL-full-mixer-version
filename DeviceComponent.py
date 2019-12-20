@@ -56,12 +56,6 @@ class DeviceComponent(DeviceComponentBase):
 
         super(DeviceComponent, self).set_on_off_button(button)
 
-    def set_lock_button(self, button):
-        if button:
-            button.set_on_off_values('Color.LockOn', 'Color.LockOff')
-
-        super(DeviceComponent, self).set_lock_button(button)
-
     def _scroll_device_view(self, direction):
         self.application().view.show_view('Detail')
         self.application().view.show_view('Detail/DeviceChain')

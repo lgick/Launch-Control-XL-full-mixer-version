@@ -131,11 +131,10 @@ class LaunchControlXL(IdentifiableControlSurface):
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights,
-                 prev_device_button=self._button_9,
-                 next_device_button=self._button_10,
-                 reset_device_button=self._button_11,
-                 on_off_button=self._button_1,
-                 lock_button=self._button_2
+                 on_off_button=self._button_9,
+                 reset_device_button=self._button_10,
+                 prev_device_button=self._button_11,
+                 next_device_button=self._button_12
                  )),
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'device')))
 
