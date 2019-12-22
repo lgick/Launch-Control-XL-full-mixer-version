@@ -229,7 +229,15 @@ class MixerComponent(MixerComponentBase):
         if strip._track in tracks:
             index = list(tracks).index(strip._track)
 
-        if self.track_activators[index] != True or self.track_activators[index] == True and len(self.track_activators) > 1:
+        def get_track_activators_quanity():
+            count = 0
+            for index in self.track_activators:
+                if self.track_activators[index] == True:
+                    count += 1
+
+            return count
+
+        if self.track_activators[index] != True or self.track_activators[index] == True and get_track_activators_quanity() > 1:
             self.track_activators[index] = True
             self.track_activators_list.append(index)
 
@@ -248,7 +256,8 @@ class MixerComponent(MixerComponentBase):
         if strip._track in tracks:
             index = list(tracks).index(strip._track)
 
-        self.track_activators_list.remove(index)
+        if index in self.track_activators_list:
+            self.track_activators_list.remove(index)
 
     @tracks_activate_send_button.pressed
     def tracks_activate_send_button(self, button):

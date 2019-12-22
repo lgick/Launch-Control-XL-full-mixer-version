@@ -25,8 +25,8 @@ from .DeviceComponent import DeviceComponent
 from .MixerComponent import MixerComponent
 from .SkinDefault import make_biled_skin
 
-#import functools, logging, traceback
-#logger = logging.getLogger(__name__)
+import functools, logging, traceback
+logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
 MIXER_NUM_TRACKS = 6
@@ -131,6 +131,7 @@ class LaunchControlXL(IdentifiableControlSurface):
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights,
+                 device_buttons=self._state_buttons1,
                  on_off_button=self._button_9,
                  reset_device_button=self._button_10,
                  prev_device_button=self._button_11,
