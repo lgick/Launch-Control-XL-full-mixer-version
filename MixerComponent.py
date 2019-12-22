@@ -61,7 +61,8 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     elif current == 1 or current == 0:
                         self._track.mixer_device.crossfade_assign = 2
 
-    def clear_buttons(self):
+    def disconnect(self):
+        super(ChannelStripComponent, self).disconnect()
         for button in [self._crossfade_toggle_A, self._crossfade_toggle_B]:
             if button != None:
                 button.reset()
@@ -72,14 +73,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
         for control in self._controls:
             if control != None:
                 control.release_parameter()
-
-    def disconnect(self):
-        super(ChannelStripComponent, self).disconnect()
-        self.clear_buttons()
-
-    def _disconnect_parameters(self):
-        super(ChannelStripComponent, self)._disconnect_parameters()
-        self.clear_buttons()
 
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
