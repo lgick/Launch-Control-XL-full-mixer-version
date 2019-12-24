@@ -15,7 +15,6 @@ from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from _Framework.Layer import Layer
 from _Framework.ModesComponent import ReenterBehaviour as ReenterBehaviourBase, ModesComponent as ModesComponentBase, AddLayerMode
 from _Framework.SessionComponent import SessionComponent
-from _Framework.TransportComponent import TransportComponent
 from _Framework.SliderElement import SliderElement
 from _Framework.SubjectSlot import subject_slot
 from _Framework.Util import nop
@@ -23,6 +22,7 @@ from _Framework import Task
 from .ButtonElement import ButtonElement
 from .DeviceComponent import DeviceComponent
 from .MixerComponent import MixerComponent
+from .TransportComponent import TransportComponent
 from .SkinDefault import make_biled_skin
 
 import functools, logging, traceback
@@ -164,7 +164,8 @@ class LaunchControlXL(IdentifiableControlSurface):
              AddLayerMode(transport, Layer(
                  nudge_up_button=self._button_1,
                  nudge_down_button=self._button_2,
-                 tap_tempo_button=self._button_3
+                 tap_tempo_button=self._button_3,
+                 metronome_button = self._button_4,
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mute')))
 

@@ -39,14 +39,6 @@ class BiLedColors:
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 
-
-        # nav buttons
-        NavUp = Color(60)
-        NavDown = Color(60)
-        NavLeft = Color(60)
-        NavRight = Color(60)
-
-
         # Device mode
         TrackSelected = Color(58)
         TrackUnselected = Color(29)
@@ -70,6 +62,12 @@ class BiLedColors:
 
         MuteOn = Color(29)
         MuteOff = Color(60)
+
+        NavButtonOn = Color(62)
+        NavButtonOff = Color(29)
+
+        MetronomeOn = Color(62)
+        MetronomeOff = Color(29)
 
 
         # Send mode
