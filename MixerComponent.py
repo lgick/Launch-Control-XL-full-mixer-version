@@ -100,23 +100,17 @@ class ChannelStripComponent(ChannelStripComponentBase):
         if liveobj_valid(self._track):
             self._sends_active = True
             self._sends_mode = mode
+            count = 0
 
-            if mode == 'A':
-                count = 0
-                for control in self._controls:
-                    if count < len(self._track.mixer_device.sends):
-                        control.connect_to(self._track.mixer_device.sends[count])
-                    else:
-                        control.release_parameter()
-                    count += 1
-            elif mode == 'B':
+            if mode == 'B':
                 count = 6
-                for control in self._controls:
-                    if count < len(self._track.mixer_device.sends):
-                        control.connect_to(self._track.mixer_device.sends[count])
-                    else:
-                        control.release_parameter()
-                    count += 1
+
+            for control in self._controls:
+                if count < len(self._track.mixer_device.sends):
+                    control.connect_to(self._track.mixer_device.sends[count])
+                else:
+                    control.release_parameter()
+                count += 1
 
     def get_sends_status(self):
         return self._sends_active
