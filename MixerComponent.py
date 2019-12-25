@@ -323,7 +323,11 @@ class MixerComponent(MixerComponentBase):
                 self.sends_mode = 'A'
 
             self.on_return_tracks_changed()
-            self.update_sends()
+
+            if self.mode == 'device' or self.mode == 'device_detail':
+                self.update_sends_for_selected_track()
+            elif self.mode == 'send':
+                self.update_sends()
 
     @master_select_button.pressed
     def master_select_button(self, button):
@@ -348,7 +352,9 @@ class MixerComponent(MixerComponentBase):
     def on_track_list_changed(self):
         MixerComponentBase.on_track_list_changed(self)
         self.on_return_tracks_changed()
-        self.update_sends()
+
+        if self.mode == 'send':
+            self.update_sends()
 
     def on_return_tracks_changed(self):
         length = len(self.song().return_tracks)
