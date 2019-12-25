@@ -55,6 +55,9 @@ class BiLedColors:
         PrevDevice = Color(60)
         NextDevice = Color(60)
 
+        BankOn = Color(60)
+        BankOff = Color(28)
+
 
         # Mute mode
         SoloOn = Color(60)

@@ -136,7 +136,10 @@ class LaunchControlXL(IdentifiableControlSurface):
                  on_off_button=self._button_9,
                  reset_device_button=self._button_10,
                  prev_device_button=self._button_11,
-                 next_device_button=self._button_12
+                 next_device_button=self._button_12,
+                 bank_prev_button=self._button_15,
+                 bank_next_button=self._button_16
+
                  )),
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'device')))
 

@@ -90,6 +90,24 @@ class DeviceComponent(DeviceComponentBase):
             self.next_device_button.set_control_element(button)
             self.next_device_button.color = 'Color.NextDevice'
 
+    def set_bank_prev_button(self, button):
+        if button:
+            button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+
+        if button != self._bank_down_button:
+            self._bank_down_button = button
+            self._bank_down_button_slot.subject = button
+            self.update()
+
+    def set_bank_next_button(self, button):
+        if button:
+            button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+
+        if button != self._bank_up_button:
+            self._bank_up_button = button
+            self._bank_up_button_slot.subject = button
+            self.update()
+
     def set_reset_device_button(self, button):
         if button:
             self.reset_device_button.set_control_element(button)
