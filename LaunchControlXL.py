@@ -58,6 +58,7 @@ class ModesComponent(ModesComponentBase):
         self._mixer.clear_buttons()
         self._device.clear_buttons()
         super(ModesComponent, self)._do_enter_mode(name)
+        self._mixer.set_mode(name)
 
     def blink(self):
         self.light_select = not self.light_select

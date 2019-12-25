@@ -19,6 +19,8 @@ import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
+SEND_CONTROLS = [13, 14, 29, 30, 49, 50]
+
 class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):
         super(ChannelStripComponent, self).__init__(*a, **k)
@@ -27,12 +29,12 @@ class ChannelStripComponent(ChannelStripComponentBase):
         self._sends_mode = 'A'
         self._sends_active = False
         self._controls = [
-                EncoderElement(MIDI_CC_TYPE, 8, 13, Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, 14, Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, 29, Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, 30, Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, 49, Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, 50, Live.MidiMap.MapMode.absolute)
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[0], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[1], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[2], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[3], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[4], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute)
                 ]
 
         def make_button_slot(name):
@@ -147,6 +149,7 @@ class MixerComponent(MixerComponentBase):
     sends_mode = 'A'
     switch_sends_button = ButtonControl()
     send_buttons_mode = 'select'
+    mode = None
     send_buttons = control_list(ButtonControl, control_count=6)
     send_volumes_lights = control_list(ButtonControl, control_count=6)
     send_controls_lights = control_list(ButtonControl, control_count=6)
@@ -157,10 +160,30 @@ class MixerComponent(MixerComponentBase):
 
     def __init__(self, send_volumes=None, *a, **k):
         self.send_volumes = send_volumes
+        self.send_controls = [
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[0], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[1], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[2], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[3], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[4], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute)
+                ]
         super(MixerComponent, self).__init__(*a, **k)
 
     def _create_strip(self):
         return ChannelStripComponent()
+
+    def set_mode(self, mode):
+        self.mode = mode
+
+        if self.mode == 'device' or self.mode == 'device_detail':
+            for strip in self._channel_strips:
+                strip.sends_off()
+            self.update_sends_for_selected_track()
+        elif self.mode == 'send':
+            for control in self.send_controls:
+                control.release_parameter()
+            self.update_sends()
 
     def clear_buttons(self):
         for button in self.send_buttons:
@@ -177,6 +200,25 @@ class MixerComponent(MixerComponentBase):
         self.master_select_button.set_control_element(None)
         self.tracks_activate_send_button.color = 'Color.Off'
         self.tracks_activate_send_button.set_control_element(None)
+
+    def update_sends_for_selected_track(self):
+        track = self.song().view.selected_track
+
+        if track == self.song().master_track:
+            for control in self.send_controls:
+                control.release_parameter()
+        else:
+            count = 0
+
+            if self.sends_mode == 'B':
+                count = 6
+
+            for control in self.send_controls:
+                if count < len(track.mixer_device.sends):
+                    control.connect_to(track.mixer_device.sends[count])
+                else:
+                    control.release_parameter()
+                count += 1
 
     def update_sends(self):
         tracks = self.song().tracks
@@ -292,6 +334,9 @@ class MixerComponent(MixerComponentBase):
         MixerComponentBase.on_selected_track_changed(self)
         self.on_master_selected_track_changed()
         self.on_return_tracks_changed()
+
+        if self.mode == 'device' or self.mode == 'device_detail':
+            self.update_sends_for_selected_track()
         return
 
     def on_master_selected_track_changed(self):
