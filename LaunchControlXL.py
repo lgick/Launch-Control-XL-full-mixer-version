@@ -23,13 +23,13 @@ from .ButtonElement import ButtonElement
 from .DeviceComponent import DeviceComponent
 from .MixerComponent import MixerComponent
 from .TransportComponent import TransportComponent
+from .SessionComponent import SessionComponent
 from .SkinDefault import make_biled_skin
 
 import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
-MIXER_NUM_TRACKS = 6
 NUM_TRACKS = 8
 NUM_SCENES = 1
 LIVE_CHANNEL = 8
@@ -49,14 +49,18 @@ class ModesComponent(ModesComponentBase):
     light_select = False
     button = None
 
-    def __init__(self, mixer, device, *a, **k):
+    def __init__(self, mixer, device, transport, session, *a, **k):
         super(ModesComponent, self).__init__(*a, **k)
         self._mixer = mixer
         self._device = device
+        self._transport = transport
+        self._session = session
 
     def _do_enter_mode(self, name):
         self._mixer.clear_buttons()
         self._device.clear_buttons()
+        self._transport.clear_buttons()
+        self._session.clear_buttons()
         super(ModesComponent, self)._do_enter_mode(name)
         self._mixer.set_mode(name)
 
@@ -111,7 +115,7 @@ class LaunchControlXL(IdentifiableControlSurface):
             self.set_device_component(device)
             self.set_highlighting_session_component(session)
 
-            mixer_modes = ModesComponent(mixer, device)
+            mixer_modes = ModesComponent(mixer, device, transport, session)
 
             set_main_mode = partial(setattr, mixer_modes, 'selected_mode')
 
@@ -156,20 +160,26 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             mixer_modes.add_mode('mute_detail', [
              AddLayerMode(session, Layer(
-                 select_prev_button=self._button_5,
-                 select_next_button=self._button_6,
-                 track_bank_left_button=self._button_7,
-                 track_bank_right_button=self._button_8
+                 page_left_button=self._button_1,
+                 page_right_button=self._button_2,
+                 track_bank_left_button=self._button_9,
+                 track_bank_right_button=self._button_10,
+                 clip_left_button=self._button_5,
+                 clip_right_button=self._button_6,
+                 clip_up_button=self._button_13,
+                 clip_down_button=self._button_14
                  )),
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
                  )),
              AddLayerMode(transport, Layer(
-                 nudge_up_button=self._button_1,
-                 nudge_down_button=self._button_2,
-                 tap_tempo_button=self._button_3,
                  metronome_button = self._button_4,
+                 tap_tempo_button=self._button_12,
+                 delete_clip_button=self._button_7,
+                 rec_clip_button=self._button_8,
+                 stop_clip_button=self._button_15,
+                 play_clip_button=self._button_16
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mute')))
 
@@ -347,19 +357,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_session(self):
         session = SessionComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=True, auto_name=True, enable_skinning=True)
-        #track_bank_left_button=when_bank_off(self._left_button)
-        #track_bank_right_button=when_bank_off(self._right_button)
-        #scene_bank_up_button=when_bank_off(self._up_button)
-        #scene_bank_down_button=when_bank_off(self._down_button)
-        #page_left_button=when_bank_on(self._left_button)
-        #page_right_button=when_bank_on(self._right_button)
-        #page_up_button=when_bank_on(self._up_button)
-        #page_down_button=when_bank_on(self._down_button)
-        #stop_track_clip_buttons=self._stop_buttons
-        #stop_all_clips_button=self._stop_all_button
-        #scene_launch_buttons=self._scene_launch_buttons
-        #clip_launch_buttons=self._session_matrix
-
         session.layer = Layer(
                 stop_all_clips_button=self._left_button,
                 scene_launch_buttons=ButtonMatrixElement(rows=[[self._right_button]]),

@@ -66,11 +66,16 @@ class BiLedColors:
         MuteOn = Color(29)
         MuteOff = Color(60)
 
-        NavButtonOn = Color(62)
-        NavButtonOff = Color(29)
-
         MetronomeOn = Color(62)
         MetronomeOff = Color(29)
+
+        NavButtonOn = Color(60)
+        NavButtonOff = Color(28)
+
+        ClipDelete = Color(47)
+        ClipRec = Color(15)
+        ClipStop = Color(47)
+        ClipPlay = Color(62)
 
 
         # Send mode
