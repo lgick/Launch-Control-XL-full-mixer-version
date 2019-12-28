@@ -73,7 +73,8 @@ class BiLedColors:
         NavButtonOff = Color(28)
 
         ClipDelete = Color(47)
-        ClipRec = Color(15)
+        ClipOverdubOn = Color(15)
+        ClipOverdubOff = Color(13)
         ClipStop = Color(47)
         ClipPlay = Color(62)
 

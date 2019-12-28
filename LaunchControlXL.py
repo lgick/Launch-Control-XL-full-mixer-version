@@ -177,7 +177,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                  metronome_button = self._button_4,
                  tap_tempo_button=self._button_12,
                  delete_clip_button=self._button_7,
-                 rec_clip_button=self._button_8,
+                 overdub_button=self._button_8,
                  stop_clip_button=self._button_15,
                  play_clip_button=self._button_16
                  ))

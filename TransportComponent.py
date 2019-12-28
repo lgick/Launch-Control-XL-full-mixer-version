@@ -14,8 +14,32 @@ logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
 class TransportComponent(TransportComponentBase):
+    delete_clip_button = ButtonControl()
+    stop_clip_button = ButtonControl()
+    play_clip_button = ButtonControl()
+
+    @delete_clip_button.pressed
+    def delete_clip_button(self, button):
+        clip = self.song().view.detail_clip
+        if clip:
+            self.song().view.selected_track.delete_clip(clip)
+
+    @stop_clip_button.pressed
+    def stop_clip_button(self, button):
+        self.song().view.selected_track.stop_all_clips(False)
+
+    @play_clip_button.pressed
+    def play_clip_button(self, button):
+        current_slot = self.song().view.highlighted_clip_slot
+        current_slot.fire()
+
     def clear_buttons(self):
-        pass
+        self.delete_clip_button.color = 'Color.Off'
+        self.delete_clip_button.set_control_element(None)
+        self.stop_clip_button.color = 'Color.Off'
+        self.stop_clip_button.set_control_element(None)
+        self.play_clip_button.color = 'Color.Off'
+        self.play_clip_button.set_control_element(None)
 
     def set_metronome_button(self, button):
         if button:
@@ -28,7 +52,22 @@ class TransportComponent(TransportComponentBase):
             self._tap_tempo_value.subject = button
             self._update_tap_tempo_button()
 
+    def set_delete_clip_button(self, button):
+        if button:
+            self.delete_clip_button.set_control_element(button)
+            self.delete_clip_button.color = 'Color.ClipDelete'
+
+    def set_overdub_button(self, button):
+        if button:
+            button.set_on_off_values('Color.ClipOverdubOn', 'Color.ClipOverdubOff')
+        self._overdub_toggle.set_toggle_button(button)
+
     def set_stop_clip_button(self, button):
         if button:
-            button.color = 'Color.StopClip'
-        #self._song().view.selected_track.stop_all_clips(False)
+            self.stop_clip_button.set_control_element(button)
+            self.stop_clip_button.color = 'Color.ClipStop'
+
+    def set_play_clip_button(self, button):
+        if button:
+            self.play_clip_button.set_control_element(button)
+            self.play_clip_button.color = 'Color.ClipPlay'
