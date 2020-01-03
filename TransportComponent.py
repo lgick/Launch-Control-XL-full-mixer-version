@@ -30,6 +30,15 @@ class TransportComponent(TransportComponentBase):
 
     @play_clip_button.pressed
     def play_clip_button(self, button):
+        tracks = self.song().tracks
+        clip = self.song().view.detail_clip
+
+        if not clip:
+            for track in tracks:
+                track.arm = False
+
+            self.song().view.selected_track.arm = True
+
         current_slot = self.song().view.highlighted_clip_slot
         current_slot.fire()
 

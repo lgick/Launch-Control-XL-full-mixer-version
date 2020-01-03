@@ -15,64 +15,64 @@ logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
 class SessionComponent(SessionComponentBase):
+    _clip_horisontal_buttons = None
+    scene_play_button = ButtonControl()
+    scene_stop_button = ButtonControl()
 
     def __init__(self, *a, **k):
         super(SessionComponent, self).__init__(*a, **k)
 
-        self._clip_vertical_button, self._clip_horisontal_button = self.register_components(ScrollComponent(), ScrollComponent())
-        self._clip_vertical_button.scroll_up_button.color = 'Color.NavButtonOn'
-        self._clip_vertical_button.scroll_down_button.color = 'Color.NavButtonOn'
-        self._clip_vertical_button.scroll_up_button.pressed_color = 'Color.NavButtonOn'
-        self._clip_vertical_button.scroll_down_button.pressed_color = 'Color.NavButtonOn'
-        self._clip_horisontal_button.scroll_up_button.color = 'Color.NavButtonOn'
-        self._clip_horisontal_button.scroll_down_button.color = 'Color.NavButtonOn'
-        self._clip_horisontal_button.scroll_up_button.pressed_color = 'Color.NavButtonOn'
-        self._clip_horisontal_button.scroll_down_button.pressed_color = 'Color.NavButtonOn'
+        self._clip_horisontal_buttons = ScrollComponent()
 
-        def can_clip():
-            return True
+        self._clip_horisontal_buttons.scroll_up_button.color = 'Color.NavButtonOn'
+        self._clip_horisontal_buttons.scroll_down_button.color = 'Color.NavButtonOn'
+        self._clip_horisontal_buttons.scroll_up_button.disabled_color = 'Color.NavButtonOff'
+        self._clip_horisontal_buttons.scroll_down_button.disabled_color = 'Color.NavButtonOff'
+        self._clip_horisontal_buttons.scroll_up_button.pressed_color = None
+        self._clip_horisontal_buttons.scroll_down_button.pressed_color = None
 
-        self._clip_vertical_button.can_scroll_up = can_clip
-        self._clip_vertical_button.can_scroll_down = can_clip
-        self._clip_vertical_button.scroll_up = self.clip_up
-        self._clip_vertical_button.scroll_down = self.clip_down
+        self._clip_horisontal_buttons.can_scroll_up = self.can_clip_left
+        self._clip_horisontal_buttons.can_scroll_down = self.can_clip_right
+        self._clip_horisontal_buttons.scroll_up = self.clip_left
+        self._clip_horisontal_buttons.scroll_down = self.clip_right
 
-        self._clip_horisontal_button.can_scroll_up = can_clip
-        self._clip_horisontal_button.can_scroll_down = can_clip
-        self._clip_horisontal_button.scroll_up = self.clip_left
-        self._clip_horisontal_button.scroll_down = self.clip_right
-
-    def clip_up(self):
-        selected_track = self.song().view.selected_track
-        selected_scene = self.song().view.selected_scene
+    @scene_play_button.pressed
+    def scene_play_button(self, button):
         tracks = self.song().tracks
+        track_offset = self.track_offset()
+        scene_offset = self.scene_offset()
+
+        for x in xrange(self._num_tracks):
+            clip = tracks[track_offset + x].clip_slots[scene_offset]
+            if clip.has_clip:
+                clip.fire()
+
+    @scene_stop_button.pressed
+    def scene_stop_button(self, button):
         scenes = self.song().scenes
-
-        if selected_track not in tracks:
-            self.song().view.selected_track = tracks[self.track_offset()]
-            self.song().view.selected_scene = scenes[0]
-        else:
-            if selected_scene != scenes[0]:
-                index = list(scenes).index(selected_scene)
-                self.song().view.selected_scene = scenes[(index - 1)]
-            else:
-                self.song().view.selected_scene = scenes[(-1)]
-
-    def clip_down(self):
-        selected_track = self.song().view.selected_track
-        selected_scene = self.song().view.selected_scene
         tracks = self.song().tracks
-        scenes = self.song().scenes
+        track_offset = self.track_offset()
+        scene_offset = self.scene_offset()
 
-        if selected_track not in tracks:
-            self.song().view.selected_track = tracks[self.track_offset()]
-            self.song().view.selected_scene = scenes[0]
-        else:
-            if selected_scene != scenes[(-1)]:
-                index = list(scenes).index(selected_scene)
-                self.song().view.selected_scene = scenes[(index + 1)]
-            else:
-                self.song().view.selected_scene = scenes[0]
+        for x in xrange(self._num_tracks):
+            clip = tracks[track_offset + x].clip_slots[scene_offset]
+            if clip.is_playing:
+                clip.stop()
+
+    def on_selected_scene_changed(self):
+        super(SessionComponent, self).on_selected_scene_changed()
+        if self._clip_horisontal_buttons:
+            self._clip_horisontal_buttons.update()
+
+    def can_clip_left(self):
+        selected_track = self.song().view.selected_track
+        tracks = self.song().tracks
+        return selected_track != tracks[0]
+
+    def can_clip_right(self):
+        selected_track = self.song().view.selected_track
+        tracks = self.song().tracks
+        return selected_track != tracks[(-1)]
 
     def clip_left(self):
         selected_track = self.song().view.selected_track
@@ -82,9 +82,6 @@ class SessionComponent(SessionComponentBase):
             index = list(tracks).index(selected_track) - 1
         else:
             index = self.track_offset()
-
-        if index < 0:
-            index = len(tracks) - 1
 
         for track in tracks:
             track.arm = False
@@ -101,9 +98,6 @@ class SessionComponent(SessionComponentBase):
         else:
             index = self.track_offset()
 
-        if index == len(tracks):
-            index = 0
-
         for track in tracks:
             track.arm = False
 
@@ -114,16 +108,10 @@ class SessionComponent(SessionComponentBase):
         return
 
     def set_clip_left_button(self, button):
-        self._clip_horisontal_button.set_scroll_up_button(button)
+        self._clip_horisontal_buttons.set_scroll_up_button(button)
 
     def set_clip_right_button(self, button):
-        self._clip_horisontal_button.set_scroll_down_button(button)
-
-    def set_clip_up_button(self, button):
-        self._clip_vertical_button.set_scroll_up_button(button)
-
-    def set_clip_down_button(self, button):
-        self._clip_vertical_button.set_scroll_down_button(button)
+        self._clip_horisontal_buttons.set_scroll_down_button(button)
 
     def set_page_left_button(self, button):
         if button:
@@ -152,3 +140,18 @@ class SessionComponent(SessionComponentBase):
 
         self._bank_right_button = button
         self._horizontal_banking.set_scroll_down_button(button)
+
+    def set_scene_play_button(self, button):
+        if button:
+            self.scene_play_button.set_control_element(button)
+
+    def set_scene_stop_button(self, button):
+        if button:
+            self.scene_stop_button.set_control_element(button)
+
+    def set_offsets(self, track_offset, scene_offset):
+        super(SessionComponent, self).set_offsets(track_offset, scene_offset)
+        if scene_offset != None:
+            scenes = self.song().scenes
+            self.song().view.selected_scene = scenes[scene_offset]
+

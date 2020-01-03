@@ -63,6 +63,16 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     elif current == 1 or current == 0:
                         self._track.mixer_device.crossfade_assign = 2
 
+    def _select_value(self, value):
+        super(ChannelStripComponent, self)._select_value(value)
+
+        tracks = self.song().tracks
+        if self.is_enabled() and self._track != None:
+            for track in tracks:
+                track.arm = False
+
+            self.song().view.selected_track.arm = True
+
     def disconnect(self):
         super(ChannelStripComponent, self).disconnect()
         for button in [self._crossfade_toggle_A, self._crossfade_toggle_B]:
@@ -148,7 +158,7 @@ class MixerComponent(MixerComponentBase):
     master_volume_light = ButtonControl()
     sends_mode = 'A'
     switch_sends_button = ButtonControl()
-    send_buttons_mode = 'select'
+    send_buttons_mode = None
     mode = None
     send_buttons = control_list(ButtonControl, control_count=6)
     send_volumes_lights = control_list(ButtonControl, control_count=6)
@@ -176,16 +186,18 @@ class MixerComponent(MixerComponentBase):
     def set_mode(self, mode):
         self.mode = mode
 
-        if self.mode == 'device' or self.mode == 'device_detail':
-            for strip in self._channel_strips:
-                strip.sends_off()
-            self.update_sends_for_selected_track()
-        elif self.mode == 'send':
+        if self.mode == 'send':
             for control in self.send_controls:
                 control.release_parameter()
             self.update_sends()
+        else:
+            for strip in self._channel_strips:
+                strip.sends_off()
+            self.update_sends_for_selected_track()
 
     def clear_buttons(self):
+        self.send_buttons_mode = None
+
         for button in self.send_buttons:
             button.color = 'Color.Off'
             button.set_control_element(None)
@@ -324,10 +336,10 @@ class MixerComponent(MixerComponentBase):
 
             self.on_return_tracks_changed()
 
-            if self.mode == 'device' or self.mode == 'device_detail':
-                self.update_sends_for_selected_track()
-            elif self.mode == 'send':
+            if self.mode == 'send':
                 self.update_sends()
+            else:
+                self.update_sends_for_selected_track()
 
     @master_select_button.pressed
     def master_select_button(self, button):
@@ -339,7 +351,7 @@ class MixerComponent(MixerComponentBase):
         self.on_master_selected_track_changed()
         self.on_return_tracks_changed()
 
-        if self.mode == 'device' or self.mode == 'device_detail':
+        if self.mode != 'send':
             self.update_sends_for_selected_track()
         return
 
@@ -415,14 +427,16 @@ class MixerComponent(MixerComponentBase):
                 self.send_buttons[index].color = 'Color.SendMuteOff'
 
     def set_send_select_buttons(self, buttons):
-        self.send_buttons_mode = 'select'
-        self.send_buttons.set_control_element(buttons)
-        self.on_return_tracks_changed()
+        if buttons:
+            self.send_buttons_mode = 'select'
+            self.send_buttons.set_control_element(buttons)
+            self.on_return_tracks_changed()
 
     def set_send_mute_buttons(self, buttons):
-        self.send_buttons_mode = 'mute'
-        self.send_buttons.set_control_element(buttons)
-        self.on_return_tracks_changed()
+        if buttons:
+            self.send_buttons_mode = 'mute'
+            self.send_buttons.set_control_element(buttons)
+            self.on_return_tracks_changed()
 
     def set_switch_sends_button(self, button):
         self.switch_sends_button.set_control_element(button)
@@ -486,8 +500,6 @@ class MixerComponent(MixerComponentBase):
             self.update_sends()
 
     def set_tracks_activate_send_button(self, button):
-        self.tracks_activate_send_button.set_control_element(None)
-
         if button:
             tracks = self.song().tracks
             self.all_track_activators = True
