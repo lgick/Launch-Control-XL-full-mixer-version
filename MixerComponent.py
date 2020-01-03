@@ -439,8 +439,9 @@ class MixerComponent(MixerComponentBase):
             self.on_return_tracks_changed()
 
     def set_switch_sends_button(self, button):
-        self.switch_sends_button.set_control_element(button)
-        self.on_return_tracks_changed()
+        if button:
+            self.switch_sends_button.set_control_element(button)
+            self.on_return_tracks_changed()
 
     def set_send_controls_lights(self, controls):
         self.send_controls_lights.set_control_element(controls)
