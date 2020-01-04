@@ -27,14 +27,6 @@ class DeviceComponent(DeviceComponentBase):
                 button.color = 'Color.Off'
                 button.set_control_element(None)
 
-        if self._bank_up_button != None:
-            self._bank_up_button.set_light('Color.Off')
-            self._bank_up_button = None
-
-        if self._bank_down_button != None:
-            self._bank_down_button.set_light('Color.Off')
-            self._bank_down_button = None
-
         self.prev_device_button.color = 'Color.Off'
         self.next_device_button.color = 'Color.Off'
         self.prev_device_button.set_control_element(None)
@@ -92,28 +84,39 @@ class DeviceComponent(DeviceComponentBase):
             self.next_device_button.color = 'Color.NextDevice'
 
     def set_bank_prev_button(self, button):
-        if button:
-            button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+        if self._bank_down_button != None:
+            self._bank_down_button.reset()
 
-            if button != self._bank_down_button:
-                self._bank_down_button = button
-                self._bank_down_button_slot.subject = button
-                self.update()
+        if button != self._bank_down_button:
+            if button:
+                button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+
+            self._bank_down_button = button
+            self._bank_down_button_slot.subject = button
+            self.update()
 
     def set_bank_next_button(self, button):
-        if button:
-            button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+        if self._bank_up_button != None:
+            self._bank_up_button.reset()
 
-            if button != self._bank_up_button:
-                self._bank_up_button = button
-                self._bank_up_button_slot.subject = button
-                self.update()
+        if button != self._bank_up_button:
+            if button:
+                button.set_on_off_values('Color.BankOn', 'Color.BankOff')
+
+            self._bank_up_button = button
+            self._bank_up_button_slot.subject = button
+            self.update()
 
     def set_on_off_button(self, button):
+        if self._on_off_button != None:
+            self._on_off_button.reset()
+
         if button:
             button.set_on_off_values('Color.DeviceOn', 'Color.DeviceOff')
 
-        super(DeviceComponent, self).set_on_off_button(button)
+        self._on_off_button = button
+        self._on_off_button_slot.subject = button
+        self._update_on_off_button()
 
     def set_device_buttons(self, buttons):
         if buttons:
@@ -131,6 +134,3 @@ class DeviceComponent(DeviceComponentBase):
         super(DeviceComponent, self).set_device(device)
         for light in self.parameter_lights:
             light.enabled = bool(device)
-
-    def _is_banking_enabled(self):
-        return True

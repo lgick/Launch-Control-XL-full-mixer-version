@@ -7,6 +7,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonElement import ON_VALUE, OFF_VALUE, ButtonElement as ButtonElementBase
 
+import functools, logging, traceback
+logger = logging.getLogger(__name__)
+#logger.error('#### !!!!!!!!!!! #########')
+
 class ButtonElement(ButtonElementBase):
     _on_value = None
     _off_value = None
