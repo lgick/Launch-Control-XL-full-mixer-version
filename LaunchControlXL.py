@@ -166,7 +166,6 @@ class LaunchControlXL(IdentifiableControlSurface):
                  )),
              AddLayerMode(transport, Layer(
                  metronome_button = self._button_4,
-                 tap_tempo_button=self._button_12,
                  delete_clip_button=self._button_5,
                  overdub_button=self._button_13,
                  stop_clip_button=self._button_14,

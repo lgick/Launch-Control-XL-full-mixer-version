@@ -51,15 +51,12 @@ class TransportComponent(TransportComponentBase):
         self.play_clip_button.set_control_element(None)
 
     def set_metronome_button(self, button):
+        if self._metronome_toggle._on_button_value.subject:
+            self._metronome_toggle._on_button_value.subject.reset()
+
         if button:
             button.set_on_off_values('Color.MetronomeOn', 'Color.MetronomeOff')
         self._metronome_toggle.set_toggle_button(button)
-
-    def set_tap_tempo_button(self, button):
-        if self._tap_tempo_button != button:
-            self._tap_tempo_button = button
-            self._tap_tempo_value.subject = button
-            self._update_tap_tempo_button()
 
     def set_delete_clip_button(self, button):
         if button:
@@ -67,6 +64,9 @@ class TransportComponent(TransportComponentBase):
             self.delete_clip_button.color = 'Color.ClipDelete'
 
     def set_overdub_button(self, button):
+        if self._overdub_toggle._on_button_value.subject:
+            self._overdub_toggle._on_button_value.subject.reset()
+
         if button:
             button.set_on_off_values('Color.ClipOverdubOn', 'Color.ClipOverdubOff')
         self._overdub_toggle.set_toggle_button(button)
