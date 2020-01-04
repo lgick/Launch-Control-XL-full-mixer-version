@@ -23,14 +23,6 @@ class SessionComponent(SessionComponentBase):
         super(SessionComponent, self).__init__(*a, **k)
 
         self._clip_horisontal_buttons = ScrollComponent()
-
-        self._clip_horisontal_buttons.scroll_up_button.color = 'Color.NavButtonOn'
-        self._clip_horisontal_buttons.scroll_down_button.color = 'Color.NavButtonOn'
-        self._clip_horisontal_buttons.scroll_up_button.disabled_color = 'Color.NavButtonOff'
-        self._clip_horisontal_buttons.scroll_down_button.disabled_color = 'Color.NavButtonOff'
-        self._clip_horisontal_buttons.scroll_up_button.pressed_color = None
-        self._clip_horisontal_buttons.scroll_down_button.pressed_color = None
-
         self._clip_horisontal_buttons.can_scroll_up = self.can_clip_left
         self._clip_horisontal_buttons.can_scroll_down = self.can_clip_right
         self._clip_horisontal_buttons.scroll_up = self.clip_left
@@ -108,37 +100,69 @@ class SessionComponent(SessionComponentBase):
         return
 
     def set_clip_left_button(self, button):
+        if button:
+            self._clip_horisontal_buttons.scroll_up_button.color = 'Color.NavButtonOn'
+            self._clip_horisontal_buttons.scroll_up_button.disabled_color = 'Color.NavButtonOff'
+            self._clip_horisontal_buttons.scroll_up_button.pressed_color = None
+        else:
+            self._clip_horisontal_buttons.scroll_up_button.color = 'Color.Off'
+            self._clip_horisontal_buttons.scroll_up_button.disabled_color = 'Color.Off'
+
         self._clip_horisontal_buttons.set_scroll_up_button(button)
 
     def set_clip_right_button(self, button):
+        if button:
+            self._clip_horisontal_buttons.scroll_down_button.color = 'Color.NavButtonOn'
+            self._clip_horisontal_buttons.scroll_down_button.disabled_color = 'Color.NavButtonOff'
+            self._clip_horisontal_buttons.scroll_down_button.pressed_color = None
+        else:
+            self._clip_horisontal_buttons.scroll_down_button.color = 'Color.Off'
+            self._clip_horisontal_buttons.scroll_down_button.disabled_color = 'Color.Off'
+
         self._clip_horisontal_buttons.set_scroll_down_button(button)
 
     def set_page_left_button(self, button):
         if button:
-            button.set_on_off_values('Color.NavButtonOn', 'Color.NavButtonOff')
+            self._horizontal_paginator.scroll_up_button.color = 'Color.NavButtonOn'
+            self._horizontal_paginator.scroll_up_button.disabled_color = 'Color.NavButtonOff'
+            self._horizontal_paginator.scroll_up_button.pressed_color = None
+        else:
+            self._horizontal_paginator.scroll_up_button.color = 'Color.Off'
+            self._horizontal_paginator.scroll_up_button.disabled_color = 'Color.Off'
 
-        self._page_left_button = button
         self._horizontal_paginator.set_scroll_up_button(button)
 
     def set_page_right_button(self, button):
         if button:
-            button.set_on_off_values('Color.NavButtonOn', 'Color.NavButtonOff')
+            self._horizontal_paginator.scroll_down_button.color = 'Color.NavButtonOn'
+            self._horizontal_paginator.scroll_down_button.disabled_color = 'Color.NavButtonOff'
+            self._horizontal_paginator.scroll_down_button.pressed_color = None
+        else:
+            self._horizontal_paginator.scroll_down_button.color = 'Color.Off'
+            self._horizontal_paginator.scroll_down_button.disabled_color = 'Color.Off'
 
-        self._page_right_button = button
         self._horizontal_paginator.set_scroll_down_button(button)
 
     def set_track_bank_left_button(self, button):
         if button:
-            button.set_on_off_values('Color.NavButtonOn', 'Color.NavButtonOff')
+            self._horizontal_banking.scroll_up_button.color = 'Color.NavButtonOn'
+            self._horizontal_banking.scroll_up_button.disabled_color = 'Color.NavButtonOff'
+            self._horizontal_banking.scroll_up_button.pressed_color = None
+        else:
+            self._horizontal_banking.scroll_up_button.color = 'Color.Off'
+            self._horizontal_banking.scroll_up_button.disabled_color = 'Color.Off'
 
-        self._bank_left_button = button
         self._horizontal_banking.set_scroll_up_button(button)
 
     def set_track_bank_right_button(self, button):
         if button:
-            button.set_on_off_values('Color.NavButtonOn', 'Color.NavButtonOff')
+            self._horizontal_banking.scroll_down_button.color = 'Color.NavButtonOn'
+            self._horizontal_banking.scroll_down_button.disabled_color = 'Color.NavButtonOff'
+            self._horizontal_banking.scroll_down_button.pressed_color = None
+        else:
+            self._horizontal_banking.scroll_down_button.color = 'Color.Off'
+            self._horizontal_banking.scroll_down_button.disabled_color = 'Color.Off'
 
-        self._bank_right_button = button
         self._horizontal_banking.set_scroll_down_button(button)
 
     def set_scene_play_button(self, button):
