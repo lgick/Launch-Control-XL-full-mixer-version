@@ -73,10 +73,10 @@ class BiLedColors:
         NavButtonOff = Color(28)
 
         ClipDelete = Color(47)
-        ClipOverdubOn = Color(15)
-        ClipOverdubOff = Color(13)
         ClipStop = Color(47)
         ClipPlay = Color(62)
+        RecOn = Color(15)
+        RecOff = Color(13)
 
 
         # Send mode

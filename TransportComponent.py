@@ -17,30 +17,68 @@ class TransportComponent(TransportComponentBase):
     delete_clip_button = ButtonControl()
     stop_clip_button = ButtonControl()
     play_clip_button = ButtonControl()
+    arm_button = ButtonControl()
 
     @delete_clip_button.pressed
     def delete_clip_button(self, button):
         clip = self.song().view.detail_clip
+
         if clip:
             self.song().view.selected_track.delete_clip(clip)
+            self.update_colors()
 
     @stop_clip_button.pressed
     def stop_clip_button(self, button):
-        self.song().view.selected_track.stop_all_clips(False)
+        tracks = self.song().tracks
+        track = self.song().view.selected_track
+
+        if track in tracks:
+            self.song().view.selected_track.stop_all_clips(False)
+            self.update_colors()
 
     @play_clip_button.pressed
     def play_clip_button(self, button):
         tracks = self.song().tracks
+        track = self.song().view.selected_track
         clip = self.song().view.detail_clip
-
-        if not clip:
-            for track in tracks:
-                track.arm = False
-
-            self.song().view.selected_track.arm = True
-
         current_slot = self.song().view.highlighted_clip_slot
-        current_slot.fire()
+
+        if track in tracks and current_slot:
+            if not clip:
+                self.song().view.selected_track.arm = True
+            current_slot.fire()
+            self.update_colors()
+
+    @arm_button.pressed
+    def arm_button(self, button):
+        tracks = self.song().tracks
+        track = self.song().view.selected_track
+
+        if track in tracks:
+            track.arm = not track.arm
+            self.update_colors()
+
+    def on_selected_track_changed(self):
+        self.update_colors()
+
+    def update_colors(self):
+        track = self.song().view.selected_track
+        tracks = self.song().tracks
+
+        if track in tracks:
+            self.delete_clip_button.color = 'Color.ClipDelete'
+            self.stop_clip_button.color = 'Color.ClipStop'
+            self.play_clip_button.color = 'Color.ClipPlay'
+
+            if track.arm == True:
+                self.arm_button.color = 'Color.RecOn'
+            else:
+                self.arm_button.color = 'Color.RecOff'
+        else:
+            self.arm_button.color = 'Color.Off'
+            self.delete_clip_button.color = 'Color.Off'
+            self.stop_clip_button.color = 'Color.Off'
+            self.play_clip_button.color = 'Color.Off'
 
     def clear_buttons(self):
         self.delete_clip_button.color = 'Color.Off'
@@ -49,6 +87,8 @@ class TransportComponent(TransportComponentBase):
         self.stop_clip_button.set_control_element(None)
         self.play_clip_button.color = 'Color.Off'
         self.play_clip_button.set_control_element(None)
+        self.arm_button.color = 'Color.Off'
+        self.arm_button.set_control_element(None)
 
     def set_metronome_button(self, button):
         if self._metronome_toggle._on_button_value.subject:
@@ -58,25 +98,30 @@ class TransportComponent(TransportComponentBase):
             button.set_on_off_values('Color.MetronomeOn', 'Color.MetronomeOff')
         self._metronome_toggle.set_toggle_button(button)
 
-    def set_delete_clip_button(self, button):
-        if button:
-            self.delete_clip_button.set_control_element(button)
-            self.delete_clip_button.color = 'Color.ClipDelete'
-
     def set_overdub_button(self, button):
         if self._overdub_toggle._on_button_value.subject:
             self._overdub_toggle._on_button_value.subject.reset()
 
         if button:
-            button.set_on_off_values('Color.ClipOverdubOn', 'Color.ClipOverdubOff')
+            button.set_on_off_values('Color.RecOn', 'Color.RecOff')
         self._overdub_toggle.set_toggle_button(button)
+
+    def set_delete_clip_button(self, button):
+        if button:
+            self.delete_clip_button.set_control_element(button)
+            self.update_colors()
+
+    def set_arm_button(self, button):
+        if button:
+            self.arm_button.set_control_element(button)
+            self.update_colors()
 
     def set_stop_clip_button(self, button):
         if button:
             self.stop_clip_button.set_control_element(button)
-            self.stop_clip_button.color = 'Color.ClipStop'
+            self.update_colors()
 
     def set_play_clip_button(self, button):
         if button:
             self.play_clip_button.set_control_element(button)
-            self.play_clip_button.color = 'Color.ClipPlay'
+            self.update_colors()
