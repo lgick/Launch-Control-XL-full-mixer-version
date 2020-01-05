@@ -158,7 +158,9 @@ class LaunchControlXL(IdentifiableControlSurface):
                  track_bank_left_button=self._button_9,
                  track_bank_right_button=self._button_10,
                  clip_left_button=self._button_6,
-                 clip_right_button=self._button_7
+                 clip_right_button=self._button_7,
+                 scene_up_button=self._button_8,
+                 scene_down_button=self._button_16
                  )),
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
