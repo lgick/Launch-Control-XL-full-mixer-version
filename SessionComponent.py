@@ -42,21 +42,21 @@ class SessionComponent(SessionComponentBase):
         scene_offset = self.scene_offset()
 
         for x in xrange(self._num_tracks):
-            clip = tracks[track_offset + x].clip_slots[scene_offset]
-            if clip.has_clip:
+            if track_offset + x < len(tracks):
+                clip = tracks[track_offset + x].clip_slots[scene_offset]
                 clip.fire()
 
     @scene_stop_button.pressed
     def scene_stop_button(self, button):
-        scenes = self.song().scenes
         tracks = self.song().tracks
         track_offset = self.track_offset()
         scene_offset = self.scene_offset()
 
         for x in xrange(self._num_tracks):
-            clip = tracks[track_offset + x].clip_slots[scene_offset]
-            if clip.is_playing:
-                clip.stop()
+            if track_offset + x < len(tracks):
+                clip = tracks[track_offset + x].clip_slots[scene_offset]
+                if clip.has_clip:
+                    clip.stop()
 
     def on_selected_scene_changed(self):
         super(SessionComponent, self).on_selected_scene_changed()
@@ -84,11 +84,7 @@ class SessionComponent(SessionComponentBase):
         else:
             index = self.track_offset()
 
-        for track in tracks:
-            track.arm = False
-
         self.song().view.selected_track = tracks[index]
-        self.song().view.selected_track.arm = True
 
     def clip_right(self):
         selected_track = self.song().view.selected_track
@@ -99,11 +95,7 @@ class SessionComponent(SessionComponentBase):
         else:
             index = self.track_offset()
 
-        for track in tracks:
-            track.arm = False
-
         self.song().view.selected_track = tracks[index]
-        self.song().view.selected_track.arm = True
 
     def can_scene_up(self):
         return self._get_minimal_scene_offset() > 0

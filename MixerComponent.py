@@ -63,16 +63,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
                     elif current == 1 or current == 0:
                         self._track.mixer_device.crossfade_assign = 2
 
-    def _select_value(self, value):
-        super(ChannelStripComponent, self)._select_value(value)
-
-        tracks = self.song().tracks
-        if self.is_enabled() and self._track != None:
-            for track in tracks:
-                track.arm = False
-
-            self.song().view.selected_track.arm = True
-
     def disconnect(self):
         super(ChannelStripComponent, self).disconnect()
         for button in [self._crossfade_toggle_A, self._crossfade_toggle_B]:
