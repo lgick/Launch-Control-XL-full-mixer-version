@@ -176,7 +176,7 @@ class MixerComponent(MixerComponentBase):
     def set_mode(self, mode):
         self.mode = mode
 
-        if self.mode == 'send':
+        if self.mode == 'mode_3':
             for control in self.send_controls:
                 control.release_parameter()
             self.update_sends()
@@ -326,7 +326,7 @@ class MixerComponent(MixerComponentBase):
 
             self.on_return_tracks_changed()
 
-            if self.mode == 'send':
+            if self.mode == 'mode_3':
                 self.update_sends()
             else:
                 self.update_sends_for_selected_track()
@@ -341,7 +341,7 @@ class MixerComponent(MixerComponentBase):
         self.on_master_selected_track_changed()
         self.on_return_tracks_changed()
 
-        if self.mode != 'send':
+        if self.mode != 'mode_3':
             self.update_sends_for_selected_track()
         return
 
@@ -355,7 +355,7 @@ class MixerComponent(MixerComponentBase):
         MixerComponentBase.on_track_list_changed(self)
         self.on_return_tracks_changed()
 
-        if self.mode == 'send':
+        if self.mode == 'mode_3':
             self.update_sends()
 
     def on_return_tracks_changed(self):
