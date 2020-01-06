@@ -219,15 +219,16 @@ class SessionComponent(SessionComponentBase):
         if track_increment != 0:
             tracks = self.song().tracks
             selected_track = self.song().view.selected_track
-            index = list(tracks).index(selected_track)
-            track_len = self._track_offset + self.width()
+            if selected_track in tracks:
+                index = list(tracks).index(selected_track)
+                track_len = self._track_offset + self.width()
 
-            if len(self.tracks_to_use()) < track_len:
-                track_len = len(self.tracks_to_use())
+                if len(self.tracks_to_use()) < track_len:
+                    track_len = len(self.tracks_to_use())
 
-            if index < self._track_offset:
-                clip = tracks[self._track_offset].clip_slots[self._scene_offset]
-                self.song().view.highlighted_clip_slot = clip
-            elif index > track_len - 1:
-                clip = tracks[track_len - 1].clip_slots[self._scene_offset]
-                self.song().view.highlighted_clip_slot = clip
+                if index < self._track_offset:
+                    clip = tracks[self._track_offset].clip_slots[self._scene_offset]
+                    self.song().view.highlighted_clip_slot = clip
+                elif index > track_len - 1:
+                    clip = tracks[track_len - 1].clip_slots[self._scene_offset]
+                    self.song().view.highlighted_clip_slot = clip
