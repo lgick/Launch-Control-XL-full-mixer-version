@@ -31,6 +31,9 @@ class BiLedColors:
         VolumeSendsA = Color(62)
         VolumeSendsB = Color(62)
 
+        SendsSelectedTrack = Color(60)
+        VolumeSendsSelectedTrack = Color(60)
+
         DeviceControlOn = Color(15)
         DeviceControlOff = Color(13)
 
@@ -40,10 +43,10 @@ class BiLedColors:
         MasterVolume = Color(60)
 
         # Device mode
-        TrackSelected = Color(58)
+        TrackSelected = Color(60)
         TrackUnselected = Color(29)
 
-        SendSelected = Color(58)
+        SendSelected = Color(60)
         SendUnselected = Color(29)
 
         MasterSelected = Color(15)
@@ -80,14 +83,14 @@ class BiLedColors:
 
 
         # Send mode
-        TrackActivatedSend = Color(60)
-        TrackUnactivatedSend = Color(29)
+        TrackActivatedSend = Color(15)
+        TrackUnactivatedSend = Color(47)
+
+        TracksActivatedSend = Color(15)
+        TracksUnactivatedSend = Color(47)
 
         SendMuteOn = Color(28)
         SendMuteOff = Color(60)
-
-        TracksActivatedSend = Color(60)
-        TracksUnactivatedSend = Color(29)
 
 
         # Cross mode

@@ -68,7 +68,10 @@ class ModesComponent(ModesComponentBase):
         else:
             self.application().view.show_view('Detail/DeviceChain')
 
-        self._mixer.set_mode(name)
+        if name.find('mode_3') is not -1:
+            self._mixer.enable_sends_for_selected_track_only(False)
+        else:
+            self._mixer.enable_sends_for_selected_track_only(True)
 
     def blink(self):
         self.light_select = not self.light_select
@@ -148,7 +151,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                  next_device_button=self._button_12,
                  bank_prev_button=self._button_15,
                  bank_next_button=self._button_16
-                 )),
+                 ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
 
             mixer_modes.add_mode('mode_2', [
@@ -183,11 +186,25 @@ class LaunchControlXL(IdentifiableControlSurface):
                  )),
              AddLayerMode(mixer, Layer(
                  track_activate_send_buttons=self._state_buttons1,
-                 send_mute_buttons=self._state_buttons3,
+                 #send_mute_buttons=self._state_buttons3,
+                 send_select_buttons=self._state_buttons3,
                  switch_sends_button=self._button_15,
                  tracks_activate_send_button=self._button_16
                  ))
-             ])
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3_detail')))
+
+            mixer_modes.add_mode('mode_3_detail', [
+             AddLayerMode(device, Layer(
+                 parameter_controls=self._device_controls,
+                 parameter_lights=self._device_controls_lights,
+                 device_buttons=self._state_buttons1,
+                 on_off_button=self._button_9,
+                 prev_device_button=self._button_11,
+                 next_device_button=self._button_12,
+                 bank_prev_button=self._button_15,
+                 bank_next_button=self._button_16
+                 ))
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
 
             mixer_modes.add_mode('mode_4', [
              AddLayerMode(device, Layer(
