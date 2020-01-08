@@ -65,6 +65,16 @@ class SessionComponent(SessionComponentBase):
         if self._scene_vertical_buttons:
             self._scene_vertical_buttons.update()
 
+    def _reassign_tracks(self):
+        if self._clip_horisontal_buttons:
+            self._clip_horisontal_buttons.update()
+        super(SessionComponent, self)._reassign_tracks()
+
+    def _reassign_scenes(self):
+        if self._scene_vertical_buttons:
+            self._scene_vertical_buttons.update()
+        super(SessionComponent, self)._reassign_scenes()
+
     def can_clip_left(self):
         selected_track = self.song().view.selected_track
         tracks = self.song().tracks
