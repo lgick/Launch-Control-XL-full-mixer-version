@@ -92,6 +92,9 @@ class BiLedColors:
         SendMuteOn = Color(28)
         SendMuteOff = Color(60)
 
+        ArmSelected = Color(15)
+        ArmUnselected = Color(13)
+
 
         # Cross mode
         CrossOn = Color(13)

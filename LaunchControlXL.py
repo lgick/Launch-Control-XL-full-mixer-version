@@ -147,10 +147,10 @@ class LaunchControlXL(IdentifiableControlSurface):
                  parameter_lights=self._device_controls_lights,
                  device_buttons=self._state_buttons1,
                  on_off_button=self._button_9,
-                 prev_device_button=self._button_11,
-                 next_device_button=self._button_12,
-                 bank_prev_button=self._button_15,
-                 bank_next_button=self._button_16
+                 bank_prev_button=self._button_11,
+                 bank_next_button=self._button_12,
+                 prev_device_button=self._button_15,
+                 next_device_button=self._button_16
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
 
@@ -177,7 +177,18 @@ class LaunchControlXL(IdentifiableControlSurface):
                  stop_clip_button=self._button_14,
                  play_clip_button=self._button_15
                  ))
-             ])
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_2_detail')))
+
+            mixer_modes.add_mode('mode_2_detail', [
+             AddLayerMode(device, Layer(
+                 parameter_controls=self._device_controls,
+                 parameter_lights=self._device_controls_lights
+                 )),
+             AddLayerMode(mixer, Layer(
+                 track_select_buttons=self._state_buttons1,
+                 arm_buttons=self._state_buttons2
+                 ))
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_2')))
 
             mixer_modes.add_mode('mode_3', [
              AddLayerMode(device, Layer(
@@ -199,10 +210,10 @@ class LaunchControlXL(IdentifiableControlSurface):
                  parameter_lights=self._device_controls_lights,
                  device_buttons=self._state_buttons1,
                  on_off_button=self._button_9,
-                 prev_device_button=self._button_11,
-                 next_device_button=self._button_12,
-                 bank_prev_button=self._button_15,
-                 bank_next_button=self._button_16
+                 bank_prev_button=self._button_11,
+                 bank_next_button=self._button_12,
+                 prev_device_button=self._button_15,
+                 next_device_button=self._button_16
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
 
@@ -307,20 +318,20 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
+          13, 14, 15, 45, 46, 47], 'Send_Control_Light_%d')])
 
         self.send_volumes = ButtonMatrixElement(rows=[[
-            make_encoder(15, 'Send_Volume_1'),
-            make_encoder(16, 'Send_Volume_2'),
-            make_encoder(31, 'Send_Volume_3'),
-            make_encoder(32, 'Send_Volume_4'),
-            make_encoder(51, 'Send_Volume_5'),
+            make_encoder(14, 'Send_Volume_1'),
+            make_encoder(30, 'Send_Volume_2'),
+            make_encoder(50, 'Send_Volume_3'),
+            make_encoder(16, 'Send_Volume_4'),
+            make_encoder(32, 'Send_Volume_5'),
             make_encoder(52, 'Send_Volume_6')
             ]])
 
         self._send_volumes_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
+          29, 30, 31, 61, 62, 63], 'Send_Volume_Light_%d')])
 
         self._state_buttons1 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])

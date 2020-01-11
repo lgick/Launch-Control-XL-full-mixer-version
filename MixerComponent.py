@@ -19,7 +19,7 @@ import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
-SEND_CONTROLS = [13, 14, 29, 30, 49, 50]
+SEND_CONTROLS = [13, 29, 49, 15, 31, 51]
 
 class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):
@@ -460,6 +460,12 @@ class MixerComponent(MixerComponentBase):
             if button:
                 button.set_on_off_values('Color.TrackSelected', 'Color.TrackUnselected')
             strip.set_select_button(button)
+
+    def set_arm_buttons(self, buttons):
+        for strip, button in izip_longest(self._channel_strips, buttons or []):
+            if button:
+                button.set_on_off_values('Color.ArmSelected', 'Color.ArmUnselected')
+            strip.set_arm_button(button)
 
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
