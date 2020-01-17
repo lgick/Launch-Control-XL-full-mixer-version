@@ -19,7 +19,7 @@ import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
-SEND_CONTROLS = [13, 29, 49, 15, 31, 51]
+SEND_CONTROLS = [13, 14, 29, 30, 49, 50]
 
 class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):

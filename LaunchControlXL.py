@@ -305,20 +305,20 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          13, 14, 15, 45, 46, 47], 'Send_Control_Light_%d')])
+          13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
 
         self.send_volumes = ButtonMatrixElement(rows=[[
-            make_encoder(14, 'Send_Volume_1'),
-            make_encoder(30, 'Send_Volume_2'),
-            make_encoder(50, 'Send_Volume_3'),
-            make_encoder(16, 'Send_Volume_4'),
-            make_encoder(32, 'Send_Volume_5'),
+            make_encoder(15, 'Send_Volume_1'),
+            make_encoder(16, 'Send_Volume_2'),
+            make_encoder(31, 'Send_Volume_3'),
+            make_encoder(32, 'Send_Volume_4'),
+            make_encoder(51, 'Send_Volume_5'),
             make_encoder(52, 'Send_Volume_6')
             ]])
 
         self._send_volumes_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          29, 30, 31, 61, 62, 63], 'Send_Volume_Light_%d')])
+          45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
 
         self._state_buttons1 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])
