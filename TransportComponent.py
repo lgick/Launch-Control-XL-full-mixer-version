@@ -17,6 +17,7 @@ class TransportComponent(TransportComponentBase):
     delete_clip_button = ButtonControl()
     stop_clip_button = ButtonControl()
     play_clip_button = ButtonControl()
+    toggle_view_button = ButtonControl()
     arm_button = ButtonControl()
 
     @delete_clip_button.pressed
@@ -49,6 +50,13 @@ class TransportComponent(TransportComponentBase):
             current_slot.fire()
             self.update_colors()
 
+    @toggle_view_button.pressed
+    def toggle_view_button(self, button):
+        if self.application().view.is_view_visible('Detail/Clip'):
+            self.application().view.show_view('Detail/DeviceChain')
+        else:
+            self.application().view.show_view('Detail/Clip')
+
     @arm_button.pressed
     def arm_button(self, button):
         tracks = self.song().tracks
@@ -69,6 +77,7 @@ class TransportComponent(TransportComponentBase):
             self.delete_clip_button.color = 'Color.ClipDelete'
             self.stop_clip_button.color = 'Color.ClipStop'
             self.play_clip_button.color = 'Color.ClipPlay'
+            self.toggle_view_button.color = 'Color.ToggleView'
 
             if track.arm == True:
                 self.arm_button.color = 'Color.RecOn'
@@ -79,6 +88,7 @@ class TransportComponent(TransportComponentBase):
             self.delete_clip_button.color = 'Color.Off'
             self.stop_clip_button.color = 'Color.Off'
             self.play_clip_button.color = 'Color.Off'
+            self.toggle_view_button.color = 'Color.Off'
 
     def clear_buttons(self):
         self.delete_clip_button.color = 'Color.Off'
@@ -87,6 +97,8 @@ class TransportComponent(TransportComponentBase):
         self.stop_clip_button.set_control_element(None)
         self.play_clip_button.color = 'Color.Off'
         self.play_clip_button.set_control_element(None)
+        self.toggle_view_button.color = 'Color.Off'
+        self.toggle_view_button.set_control_element(None)
         self.arm_button.color = 'Color.Off'
         self.arm_button.set_control_element(None)
 
@@ -124,4 +136,9 @@ class TransportComponent(TransportComponentBase):
     def set_play_clip_button(self, button):
         if button:
             self.play_clip_button.set_control_element(button)
+            self.update_colors()
+
+    def set_toggle_view_button(self, button):
+        if button:
+            self.toggle_view_button.set_control_element(button)
             self.update_colors()

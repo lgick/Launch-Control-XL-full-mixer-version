@@ -63,9 +63,7 @@ class ModesComponent(ModesComponentBase):
         self._session.clear_buttons()
         super(ModesComponent, self)._do_enter_mode(name)
 
-        if name.find('mode_4') is not -1:
-            self.application().view.show_view('Detail/Clip')
-        else:
+        if name.find('mode_1') is not -1 or name.find('mode_2') is not -1:
             self.application().view.show_view('Detail/DeviceChain')
 
         if name == 'mode_1_detail':
@@ -206,6 +204,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                  parameter_lights=self._device_controls_lights
                  )),
              AddLayerMode(transport, Layer(
+                 toggle_view_button=self._button_3,
                  metronome_button = self._button_4,
                  delete_clip_button=self._button_5,
                  overdub_button=self._button_12,

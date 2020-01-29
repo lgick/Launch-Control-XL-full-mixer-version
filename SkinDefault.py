@@ -78,6 +78,7 @@ class BiLedColors:
         ClipDelete = Color(47)
         ClipStop = Color(47)
         ClipPlay = Color(62)
+        ToggleView = Color(47)
         RecOn = Color(15)
         RecOff = Color(13)
 
