@@ -28,7 +28,7 @@ class BiLedColors:
         SendsA = Color(47)
         SendsB = Color(13)
 
-        SendControls = Color(47)
+        SendControls = Color(60)
         VolumeControls = Color(62)
 
         DeviceControlOn = Color(15)
@@ -36,10 +36,11 @@ class BiLedColors:
 
         CrossControl = Color(0)
         TempoControl = Color(0)
-        PrehearVolume = Color(60)
-        MasterVolume = Color(60)
+        PrehearVolume = Color(47)
+        MasterVolume = Color(47)
 
         ToggleView = Color(15)
+        SendsVolumesToggle = Color(15)
 
 
         # Device mode

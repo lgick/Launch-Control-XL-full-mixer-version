@@ -582,6 +582,7 @@ class MixerComponent(MixerComponentBase):
     def set_sends_volumes_toggle_button(self, button):
         if button:
             self.sends_volumes_toggle_button.set_control_element(button)
+            self.sends_volumes_toggle_button.color = 'Color.SendsVolumesToggle'
             self.update_controls_mode()
 
     def set_toggle_view_button(self, button):
