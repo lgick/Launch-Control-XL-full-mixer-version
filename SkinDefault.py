@@ -28,19 +28,19 @@ class BiLedColors:
         SendsA = Color(47)
         SendsB = Color(13)
 
-        VolumeSendsA = Color(62)
-        VolumeSendsB = Color(62)
-
-        SendsSelectedTrack = Color(60)
-        VolumeSendsSelectedTrack = Color(60)
+        SendControls = Color(47)
+        VolumeControls = Color(62)
 
         DeviceControlOn = Color(15)
         DeviceControlOff = Color(13)
 
-        CrossControl = Color(60)
-        TempoControl = Color(60)
+        CrossControl = Color(0)
+        TempoControl = Color(0)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
+
+        ToggleView = Color(15)
+
 
         # Device mode
         TrackSelected = Color(60)
@@ -78,7 +78,6 @@ class BiLedColors:
         ClipDelete = Color(47)
         ClipStop = Color(47)
         ClipPlay = Color(62)
-        ToggleView = Color(47)
         RecOn = Color(15)
         RecOff = Color(13)
 

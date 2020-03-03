@@ -14,7 +14,6 @@ from _Framework.IdentifiableControlSurface import IdentifiableControlSurface
 from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from _Framework.Layer import Layer
 from _Framework.ModesComponent import ReenterBehaviour as ReenterBehaviourBase, ModesComponent as ModesComponentBase, AddLayerMode
-from _Framework.SessionComponent import SessionComponent
 from _Framework.SliderElement import SliderElement
 from _Framework.SubjectSlot import subject_slot
 from _Framework.Util import nop
@@ -66,10 +65,10 @@ class ModesComponent(ModesComponentBase):
         if name.find('mode_1') is not -1 or name.find('mode_2') is not -1:
             self.application().view.show_view('Detail/DeviceChain')
 
-        if name == 'mode_1_detail':
-            self._mixer.enable_sends_for_selected_track_only(False)
-        else:
-            self._mixer.enable_sends_for_selected_track_only(True)
+        #if name == 'mode_1_detail':
+        #    self._mixer.enable_sends_for_selected_track_only(False)
+        #else:
+        #    self._mixer.enable_sends_for_selected_track_only(True)
 
     def blink(self):
         self.light_select = not self.light_select
@@ -126,12 +125,40 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             set_main_mode = partial(setattr, mixer_modes, 'selected_mode')
 
+            # AddLayerMode(mixer, Layer(
+            #     crossfader_buttons_A=self._state_buttons1,
+            #     crossfader_buttons_B=self._state_buttons2
+            #     ))
+
+            # AddLayerMode(session, Layer(
+            #     page_left_button=self._button_1,
+            #     page_right_button=self._button_2,
+            #     track_bank_left_button=self._button_9,
+            #     track_bank_right_button=self._button_10,
+            #     clip_left_button=self._button_6,
+            #     clip_right_button=self._button_7,
+            #     scene_up_button=self._button_8,
+            #     scene_down_button=self._button_16
+            #     ))
+
+            # AddLayerMode(transport, Layer(
+            #     toggle_view_button=self._button_3,
+            #     metronome_button = self._button_4,
+            #     delete_clip_button=self._button_5,
+            #     overdub_button=self._button_12,
+            #     arm_button=self._button_13,
+            #     stop_clip_button=self._button_14,
+            #     play_clip_button=self._button_15
+            #     ))
+
             mixer_modes.add_mode('mode_1', [
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
                  )),
              AddLayerMode(mixer, Layer(
+                 toggle_view_button=self._down_button,
+                 sends_volumes_toggle_button=self._up_button,
                  track_select_buttons=self._state_buttons1,
                  send_select_buttons=self._state_buttons3,
                  switch_sends_button=self._button_15,
@@ -142,20 +169,6 @@ class LaunchControlXL(IdentifiableControlSurface):
             mixer_modes.add_mode('mode_1_detail', [
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
-             AddLayerMode(mixer, Layer(
-                 track_activate_send_buttons=self._state_buttons1,
-                 #send_mute_buttons=self._state_buttons3,
-                 send_select_buttons=self._state_buttons3,
-                 switch_sends_button=self._button_15,
-                 tracks_activate_send_button=self._button_16
-                 ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
-
-            mixer_modes.add_mode('mode_2', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights,
                  device_buttons=self._state_buttons1,
                  on_off_button=self._button_9,
@@ -163,6 +176,24 @@ class LaunchControlXL(IdentifiableControlSurface):
                  bank_next_button=self._button_12,
                  prev_device_button=self._button_15,
                  next_device_button=self._button_16
+                 )),
+             AddLayerMode(mixer, Layer(
+                 toggle_view_button=self._down_button,
+                 sends_volumes_toggle_button=self._up_button
+                 ))
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
+
+            mixer_modes.add_mode('mode_2', [
+             AddLayerMode(device, Layer(
+                 parameter_controls=self._device_controls,
+                 parameter_lights=self._device_controls_lights
+                 )),
+             AddLayerMode(mixer, Layer(
+                 toggle_view_button=self._down_button,
+                 sends_volumes_toggle_button=self._up_button,
+                 track_activate_send_buttons=self._state_buttons1,
+                 send_mute_buttons=self._state_buttons3,
+                 tracks_activate_send_button=self._button_16
                  ))
              ])
 
@@ -172,58 +203,24 @@ class LaunchControlXL(IdentifiableControlSurface):
                  parameter_lights=self._device_controls_lights
                  )),
              AddLayerMode(mixer, Layer(
+                 toggle_view_button=self._down_button,
+                 sends_volumes_toggle_button=self._up_button,
                  mute_buttons=self._state_buttons1,
                  solo_buttons=self._state_buttons2
                  ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3_detail')))
-
-            mixer_modes.add_mode('mode_3_detail', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
-             AddLayerMode(mixer, Layer(
-                 crossfader_buttons_A=self._state_buttons1,
-                 crossfader_buttons_B=self._state_buttons2
-                 ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
+             ])
 
             mixer_modes.add_mode('mode_4', [
-             AddLayerMode(session, Layer(
-                 page_left_button=self._button_1,
-                 page_right_button=self._button_2,
-                 track_bank_left_button=self._button_9,
-                 track_bank_right_button=self._button_10,
-                 clip_left_button=self._button_6,
-                 clip_right_button=self._button_7,
-                 scene_up_button=self._button_8,
-                 scene_down_button=self._button_16
-                 )),
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
-             AddLayerMode(transport, Layer(
-                 toggle_view_button=self._button_3,
-                 metronome_button = self._button_4,
-                 delete_clip_button=self._button_5,
-                 overdub_button=self._button_12,
-                 arm_button=self._button_13,
-                 stop_clip_button=self._button_14,
-                 play_clip_button=self._button_15
-                 ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_4_detail')))
-
-            mixer_modes.add_mode('mode_4_detail', [
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
                  )),
              AddLayerMode(mixer, Layer(
-                 track_select_buttons=self._state_buttons1,
-                 arm_buttons=self._state_buttons2
+                 toggle_view_button=self._down_button,
+                 sends_volumes_toggle_button=self._up_button,
+                 arm_buttons=self._state_buttons1
                  ))
-             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_4')))
+             ])
 
             mixer_modes.layer = Layer(
                     mode_1_button=self._mode_1_button,
@@ -248,20 +245,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         def make_slider(identifier, name):
             return SliderElement(MIDI_CC_TYPE, LIVE_CHANNEL, identifier, name=name)
-
-        # controls
-        # 13 14 15 16 17 18 19 20
-        # 29 30 31 32 33 34 35 36
-        # 49 50 51 52 53 54 55 56
-
-        # controls lights
-        # 13 29 45 61 77 93 109 125
-        # 14 30 46 62 78 94 110 126
-        # 15 31 47 63 79 95 111 127
-
-        # buttons
-        # 41 42 43 44 57 58 59 60
-        # 73 74 75 76 89 90 91 92
 
         self._device_controls = ButtonMatrixElement(rows=[[
             make_encoder(17, 'Device_Control_1'),
@@ -302,22 +285,23 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, 'Volume_%d' % (i + 1)) for i in xrange(8) ]])
 
+        # controls
+        # 13 14 15 16 17 18 19 20
+        # 29 30 31 32 33 34 35 36
+        # 49 50 51 52 53 54 55 56
+
+        # controls lights
+        # 13 29 45 61 77 93 109 125
+        # 14 30 46 62 78 94 110 126
+        # 15 31 47 63 79 95 111 127
+
+        # buttons
+        # 41 42 43 44 57 58 59 60
+        # 73 74 75 76 89 90 91 92
+
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          13, 29, 14, 30, 15, 31], 'Send_Control_Light_%d')])
-
-        self.send_volumes = ButtonMatrixElement(rows=[[
-            make_encoder(15, 'Send_Volume_1'),
-            make_encoder(16, 'Send_Volume_2'),
-            make_encoder(31, 'Send_Volume_3'),
-            make_encoder(32, 'Send_Volume_4'),
-            make_encoder(51, 'Send_Volume_5'),
-            make_encoder(52, 'Send_Volume_6')
-            ]])
-
-        self._send_volumes_lights = ButtonMatrixElement(rows=[
-         make_button_list([
-          45, 61, 46, 62, 47, 63], 'Send_Volume_Light_%d')])
+          13, 29, 45, 61, 14, 30, 46, 62, 15, 31, 47, 63], 'Send_Control_Light_%d')])
 
         self._state_buttons1 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])
@@ -349,7 +333,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_mixer(self):
         mixer = MixerComponent(
-                self.send_volumes,
                 NUM_TRACKS,
                 is_enabled=True,
                 auto_name=True
@@ -357,14 +340,13 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer.layer = Layer(
                 volume_controls=self._volume_faders,
                 send_controls_lights=self._send_controls_lights,
-                send_volumes_lights=self._send_volumes_lights,
-                crossfader_control_light=self._crossfader_control_light,
-                tempo_control_light=self._tempo_control_light,
+                #crossfader_control_light=self._crossfader_control_light,
+                #tempo_control_light=self._tempo_control_light,
                 prehear_volume_light=self._prehear_volume_light,
                 master_volume_light=self._master_volume_light
                 )
 
-        mixer.set_crossfader_control(self._crossfader_control)
+        #mixer.set_crossfader_control(self._crossfader_control)
         mixer.set_prehear_volume_control(self._prehear_volume_control)
         mixer.master_strip().set_volume_control(self._master_volume_control)
 
@@ -376,10 +358,12 @@ class LaunchControlXL(IdentifiableControlSurface):
     def _create_session(self):
         session = SessionComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=True, auto_name=True, enable_skinning=True)
         session.layer = Layer(
-                scene_stop_button=self._left_button,
-                scene_play_button=self._right_button,
-                scene_bank_up_button=self._up_button,
-                scene_bank_down_button=self._down_button
+                #scene_stop_button=self._left_button,
+                #scene_play_button=self._right_button,
+                #scene_bank_up_button=self._up_button,
+                #scene_bank_down_button=self._down_button
+                track_bank_left_button=self._left_button,
+                track_bank_right_button=self._right_button
                 )
 
         self._on_session_offset_changed.subject = session
@@ -387,7 +371,7 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_transport(self):
         transport = TransportComponent(name='Transport', is_enabled=True)
-        transport.layer = Layer(tempo_control=self._tempo_control)
+        #transport.layer = Layer(tempo_control=self._tempo_control)
         return transport
 
     @subject_slot('offset')

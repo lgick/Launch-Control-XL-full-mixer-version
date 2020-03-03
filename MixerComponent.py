@@ -19,7 +19,7 @@ import functools, logging, traceback
 logger = logging.getLogger(__name__)
 #logger.error('#### !!!!!!!!!!! #########')
 
-SEND_CONTROLS = [13, 14, 29, 30, 49, 50]
+SEND_CONTROLS = [13, 14, 15, 16, 29, 30, 31, 32, 49, 50, 51, 52]
 
 class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):
@@ -33,7 +33,13 @@ class ChannelStripComponent(ChannelStripComponentBase):
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[2], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[3], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[4], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute)
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[6], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[7], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[8], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[9], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[10], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[11], Live.MidiMap.MapMode.absolute)
                 ]
 
         def make_button_slot(name):
@@ -134,6 +140,8 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
 
 class MixerComponent(MixerComponentBase):
+    toggle_view_button = ButtonControl()
+    sends_volumes_toggle_button = ButtonControl()
     master_select_button = ButtonControl()
     tracks_activate_send_button = ButtonControl()
     crossfader_control_light = ButtonControl()
@@ -141,27 +149,32 @@ class MixerComponent(MixerComponentBase):
     prehear_volume_light = ButtonControl()
     master_volume_light = ButtonControl()
     sends_mode = 'A'
+    controls_mode = 'send'
     switch_sends_button = ButtonControl()
     send_buttons_mode = None
-    sends_for_selected_track_only = True
+    sends_for_selected_track_only = False
     send_buttons = control_list(ButtonControl, control_count=6)
-    send_volumes_lights = control_list(ButtonControl, control_count=6)
-    send_controls_lights = control_list(ButtonControl, control_count=6)
+    send_controls_lights = control_list(ButtonControl, control_count=12)
     track_activate_send_buttons = control_list(ButtonControl, control_count=8)
     track_activators = {}
     all_track_activators = False
     track_activators_list = []
     one_send_active_track = False
 
-    def __init__(self, send_volumes=None, *a, **k):
-        self.send_volumes = send_volumes
+    def __init__(self, *a, **k):
         self.send_controls = [
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[0], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[1], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[2], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[3], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[4], Live.MidiMap.MapMode.absolute),
-                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute)
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[5], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[6], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[7], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[8], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[9], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[10], Live.MidiMap.MapMode.absolute),
+                EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[11], Live.MidiMap.MapMode.absolute)
                 ]
         super(MixerComponent, self).__init__(*a, **k)
 
@@ -191,6 +204,10 @@ class MixerComponent(MixerComponentBase):
             button.color = 'Color.Off'
             button.set_control_element(None)
 
+        self.sends_volumes_toggle_button.color = 'Color.Off'
+        self.sends_volumes_toggle_button.set_control_element(None)
+        self.toggle_view_button.color = 'Color.Off'
+        self.toggle_view_button.set_control_element(None)
         self.switch_sends_button.color = 'Color.Off'
         self.switch_sends_button.set_control_element(None)
         self.master_select_button.color = 'Color.Off'
@@ -227,15 +244,18 @@ class MixerComponent(MixerComponentBase):
 
                 if index in self.track_activators:
                     if self.track_activators[index] == True:
-                        strip.sends_on(self.sends_mode)
+                        if self.controls_mode == 'send':
+                            strip.sends_on(self.sends_mode)
                         button.color = 'Color.TrackActivatedSend'
                     else:
-                        strip.sends_off()
+                        if self.controls_mode == 'send':
+                            strip.sends_off()
                         button.color = 'Color.TrackUnactivatedSend'
                         self.all_track_activators = False
                 else:
                     self.track_activators[index] = False
-                    strip.sends_off()
+                    if self.controls_mode == 'send':
+                        strip.sends_off()
                     button.color = 'Color.TrackUnactivatedSend'
                     self.all_track_activators = False
             else:
@@ -245,6 +265,49 @@ class MixerComponent(MixerComponentBase):
             self.tracks_activate_send_button.color = 'Color.TracksActivatedSend'
         else:
             self.tracks_activate_send_button.color = 'Color.TracksUnactivatedSend'
+
+    def update_controls_mode(self):
+        length = len(self.song().return_tracks)
+        return_tracks = self.song().return_tracks
+
+        if self.controls_mode == 'volume':
+            for strip in self._channel_strips:
+                strip.sends_off()
+
+            for i in xrange(12):
+                if i < length:
+                    self.send_controls_lights[i].color = 'Color.VolumeControls'
+                    self.send_controls[i].connect_to(return_tracks[i].mixer_device.volume)
+                else:
+                    self.send_controls_lights[i].color = 'Color.Off'
+        elif self.controls_mode == 'send':
+            for control in self.send_controls:
+                control.release_parameter()
+
+            for i in xrange(12):
+                if i < length:
+                    self.send_controls_lights[i].color = 'Color.SendControls'
+                else:
+                    self.send_controls_lights[i].color = 'Color.Off'
+                    self.send_controls[i].release_parameter()
+            self.update_sends()
+
+    @sends_volumes_toggle_button.pressed
+    def sends_volumes_toggle_button(self, button):
+        self.controls_mode = 'volume'
+        self.update_controls_mode()
+
+    @sends_volumes_toggle_button.released
+    def sends_volumes_toggle_button(self, button):
+        self.controls_mode = 'send'
+        self.update_controls_mode()
+
+    @toggle_view_button.pressed
+    def toggle_view_button(self, button):
+        if self.application().view.is_view_visible('Detail/Clip'):
+            self.application().view.show_view('Detail/DeviceChain')
+        else:
+            self.application().view.show_view('Detail/Clip')
 
     @track_activate_send_buttons.pressed
     def track_activate_send_buttons(self, button):
@@ -359,6 +422,7 @@ class MixerComponent(MixerComponentBase):
     def on_track_list_changed(self):
         MixerComponentBase.on_track_list_changed(self)
         self.on_return_tracks_changed()
+        self.update_controls_mode()
 
         if not self.sends_for_selected_track_only:
             self.update_sends()
@@ -366,56 +430,33 @@ class MixerComponent(MixerComponentBase):
     def on_return_tracks_changed(self):
         length = len(self.song().return_tracks)
         return_tracks = self.song().return_tracks
-        selected_track = self.song().view.selected_track
 
         if length > 6:
             if self.sends_mode == 'A':
                 side_len = 6
                 i_plus = 0
                 send_color = 'Color.SendsA'
-                volume_color = 'Color.VolumeSendsA'
             elif self.sends_mode == 'B':
                 side_len = length - 6
                 i_plus = 6
                 send_color = 'Color.SendsB'
-                volume_color = 'Color.VolumeSendsB'
 
             self.switch_sends_button.color = send_color
 
             for i in xrange(6):
                 if i < side_len:
-                    if selected_track == return_tracks[i + i_plus]:
-                        self.send_controls_lights[i].color = 'Color.SendsSelectedTrack'
-                        self.send_volumes_lights[i].color = 'Color.VolumeSendsSelectedTrack'
-                    else:
-                        self.send_controls_lights[i].color = send_color
-                        self.send_volumes_lights[i].color = volume_color
                     self.set_send_button_light(return_tracks[i + i_plus], i)
-                    self.send_volumes[i].connect_to(return_tracks[i + i_plus].mixer_device.volume)
                 else:
-                    self.send_volumes_lights[i].color = 'Color.Off'
-                    self.send_controls_lights[i].color = 'Color.Off'
                     self.send_buttons[i].color = 'Color.Off'
-                    self.send_volumes[i].release_parameter()
         else:
             self.sends_mode = 'A'
             self.switch_sends_button.color = 'Color.Off'
 
             for i in xrange(6):
                 if i < length:
-                    if selected_track == return_tracks[i]:
-                        self.send_controls_lights[i].color = 'Color.SendsSelectedTrack'
-                        self.send_volumes_lights[i].color = 'Color.VolumeSendsSelectedTrack'
-                    else:
-                        self.send_controls_lights[i].color = 'Color.SendsA'
-                        self.send_volumes_lights[i].color = 'Color.VolumeSendsA'
                     self.set_send_button_light(return_tracks[i], i)
-                    self.send_volumes[i].connect_to(return_tracks[i].mixer_device.volume)
                 else:
-                    self.send_volumes_lights[i].color = 'Color.Off'
-                    self.send_controls_lights[i].color = 'Color.Off'
                     self.send_buttons[i].color = 'Color.Off'
-                    self.send_volumes[i].release_parameter()
 
     def set_send_button_light(self, track, index):
         if self.send_buttons_mode == 'select':
@@ -449,10 +490,6 @@ class MixerComponent(MixerComponentBase):
 
     def set_send_controls_lights(self, controls):
         self.send_controls_lights.set_control_element(controls)
-        self.on_return_tracks_changed()
-
-    def set_send_volumes_lights(self, controls):
-        self.send_volumes_lights.set_control_element(controls)
         self.on_return_tracks_changed()
 
     def set_track_select_buttons(self, buttons):
@@ -541,3 +578,13 @@ class MixerComponent(MixerComponentBase):
             self.master_volume_light.set_control_element(button)
             self.master_volume_light.color = "Color.MasterVolume"
             self.master_volume_light.enabled = True
+
+    def set_sends_volumes_toggle_button(self, button):
+        if button:
+            self.sends_volumes_toggle_button.set_control_element(button)
+            self.update_controls_mode()
+
+    def set_toggle_view_button(self, button):
+        if button:
+            self.toggle_view_button.set_control_element(button)
+            self.toggle_view_button.color = 'Color.ToggleView'

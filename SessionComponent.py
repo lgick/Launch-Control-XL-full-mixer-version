@@ -166,27 +166,27 @@ class SessionComponent(SessionComponentBase):
 
         self._horizontal_paginator.set_scroll_down_button(button)
 
-    def set_track_bank_left_button(self, button):
-        if button:
-            self._horizontal_banking.scroll_up_button.color = 'Color.NavButtonOn'
-            self._horizontal_banking.scroll_up_button.disabled_color = 'Color.NavButtonOff'
-            self._horizontal_banking.scroll_up_button.pressed_color = None
-        else:
-            self._horizontal_banking.scroll_up_button.color = 'Color.Off'
-            self._horizontal_banking.scroll_up_button.disabled_color = 'Color.Off'
+    #def set_track_bank_left_button(self, button):
+    #    if button:
+    #        self._horizontal_banking.scroll_up_button.color = 'Color.NavButtonOn'
+    #        self._horizontal_banking.scroll_up_button.disabled_color = 'Color.NavButtonOff'
+    #        self._horizontal_banking.scroll_up_button.pressed_color = None
+    #    else:
+    #        self._horizontal_banking.scroll_up_button.color = 'Color.Off'
+    #        self._horizontal_banking.scroll_up_button.disabled_color = 'Color.Off'
 
-        self._horizontal_banking.set_scroll_up_button(button)
+    #    self._horizontal_banking.set_scroll_up_button(button)
 
-    def set_track_bank_right_button(self, button):
-        if button:
-            self._horizontal_banking.scroll_down_button.color = 'Color.NavButtonOn'
-            self._horizontal_banking.scroll_down_button.disabled_color = 'Color.NavButtonOff'
-            self._horizontal_banking.scroll_down_button.pressed_color = None
-        else:
-            self._horizontal_banking.scroll_down_button.color = 'Color.Off'
-            self._horizontal_banking.scroll_down_button.disabled_color = 'Color.Off'
+    #def set_track_bank_right_button(self, button):
+    #    if button:
+    #        self._horizontal_banking.scroll_down_button.color = 'Color.NavButtonOn'
+    #        self._horizontal_banking.scroll_down_button.disabled_color = 'Color.NavButtonOff'
+    #        self._horizontal_banking.scroll_down_button.pressed_color = None
+    #    else:
+    #        self._horizontal_banking.scroll_down_button.color = 'Color.Off'
+    #        self._horizontal_banking.scroll_down_button.disabled_color = 'Color.Off'
 
-        self._horizontal_banking.set_scroll_down_button(button)
+    #    self._horizontal_banking.set_scroll_down_button(button)
 
     def set_scene_play_button(self, button):
         if button:
