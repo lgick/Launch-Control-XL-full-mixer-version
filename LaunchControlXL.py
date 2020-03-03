@@ -193,6 +193,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                  sends_volumes_toggle_button=self._up_button,
                  track_activate_send_buttons=self._state_buttons1,
                  send_mute_buttons=self._state_buttons3,
+                 switch_sends_button=self._button_15,
                  tracks_activate_send_button=self._button_16
                  ))
              ])
