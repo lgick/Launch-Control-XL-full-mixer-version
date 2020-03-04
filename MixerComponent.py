@@ -248,14 +248,12 @@ class MixerComponent(MixerComponentBase):
                             strip.sends_on(self.sends_mode)
                         button.color = 'Color.TrackActivatedSend'
                     else:
-                        if self.controls_mode == 'send':
-                            strip.sends_off()
+                        strip.sends_off()
                         button.color = 'Color.TrackUnactivatedSend'
                         self.all_track_activators = False
                 else:
                     self.track_activators[index] = False
-                    if self.controls_mode == 'send':
-                        strip.sends_off()
+                    strip.sends_off()
                     button.color = 'Color.TrackUnactivatedSend'
                     self.all_track_activators = False
             else:
@@ -404,6 +402,17 @@ class MixerComponent(MixerComponentBase):
         if self.song().view.selected_track != self.song().master_track:
             self.song().view.selected_track = self.song().master_track
 
+    def _reassign_tracks(self):
+        self.all_track_activators = False
+        for track in self.track_activators:
+            self.track_activators[track] = self.all_track_activators
+
+        for strip in self._channel_strips:
+            strip.sends_off()
+
+        MixerComponentBase._reassign_tracks(self)
+        self.update_sends()
+
     def on_selected_track_changed(self):
         MixerComponentBase.on_selected_track_changed(self)
         self.on_master_selected_track_changed()
@@ -411,7 +420,6 @@ class MixerComponent(MixerComponentBase):
 
         if self.sends_for_selected_track_only:
             self.update_sends_for_selected_track()
-        return
 
     def on_master_selected_track_changed(self):
         if self.song().view.selected_track != self.song().master_track:
