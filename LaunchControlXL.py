@@ -62,7 +62,7 @@ class ModesComponent(ModesComponentBase):
         self._session.clear_buttons()
         super(ModesComponent, self)._do_enter_mode(name)
 
-        if name.find('mode_1') is not -1 or name.find('mode_2') is not -1:
+        if name.find('mode_1_detail') is not -1:
             self.application().view.show_view('Detail/DeviceChain')
 
         #if name == 'mode_1_detail':
@@ -341,8 +341,8 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer.layer = Layer(
                 volume_controls=self._volume_faders,
                 send_controls_lights=self._send_controls_lights,
-                #crossfader_control_light=self._crossfader_control_light,
-                #tempo_control_light=self._tempo_control_light,
+                crossfader_control_light=self._crossfader_control_light,
+                tempo_control_light=self._tempo_control_light,
                 prehear_volume_light=self._prehear_volume_light,
                 master_volume_light=self._master_volume_light
                 )
