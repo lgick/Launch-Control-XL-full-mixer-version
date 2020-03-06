@@ -269,6 +269,8 @@ class MixerComponent(MixerComponentBase):
         return_tracks = self.song().return_tracks
 
         if self.controls_mode == 'volume':
+            self.sends_volumes_toggle_button.color = 'Color.Off'
+
             for strip in self._channel_strips:
                 strip.sends_off()
 
@@ -279,6 +281,8 @@ class MixerComponent(MixerComponentBase):
                 else:
                     self.send_controls_lights[i].color = 'Color.Off'
         elif self.controls_mode == 'send':
+            self.sends_volumes_toggle_button.color = 'Color.SendsVolumesToggle'
+
             for control in self.send_controls:
                 control.release_parameter()
 
@@ -292,13 +296,12 @@ class MixerComponent(MixerComponentBase):
 
     @sends_volumes_toggle_button.pressed
     def sends_volumes_toggle_button(self, button):
-        self.controls_mode = 'volume'
-        self.update_controls_mode()
-
-    @sends_volumes_toggle_button.released
-    def sends_volumes_toggle_button(self, button):
-        self.controls_mode = 'send'
-        self.update_controls_mode()
+        if self.controls_mode == 'volume':
+            self.controls_mode = 'send'
+            self.update_controls_mode()
+        else:
+            self.controls_mode = 'volume'
+            self.update_controls_mode()
 
     @toggle_view_button.pressed
     def toggle_view_button(self, button):
@@ -590,7 +593,6 @@ class MixerComponent(MixerComponentBase):
     def set_sends_volumes_toggle_button(self, button):
         if button:
             self.sends_volumes_toggle_button.set_control_element(button)
-            self.sends_volumes_toggle_button.color = 'Color.SendsVolumesToggle'
             self.update_controls_mode()
 
     def set_toggle_view_button(self, button):
