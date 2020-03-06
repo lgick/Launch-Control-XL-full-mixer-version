@@ -302,7 +302,7 @@ class LaunchControlXL(IdentifiableControlSurface):
 
         self._send_controls_lights = ButtonMatrixElement(rows=[
          make_button_list([
-          13, 29, 45, 61, 14, 30, 46, 62, 15, 31, 47, 63], 'Send_Control_Light_%d')])
+          13, 29, 14, 30, 15, 31, 45, 61, 46, 62, 47, 63], 'Send_Control_Light_%d')])
 
         self._state_buttons1 = ButtonMatrixElement(rows=[
          make_button_list(chain(xrange(41, 45), xrange(57, 61)), 'Track_Select_%d')])

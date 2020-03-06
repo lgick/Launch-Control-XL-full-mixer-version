@@ -25,8 +25,8 @@ class BiLedColors:
         #60 - green h
 
         #controls
-        SendsA = Color(47)
-        SendsB = Color(13)
+        SendsA = Color(13)
+        SendsB = Color(15)
 
         SendControls = Color(60)
         VolumeControls = Color(62)
