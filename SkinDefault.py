@@ -25,23 +25,22 @@ class BiLedColors:
         #60 - green h
 
         #controls
-        SendsA = Color(13)
-        SendsB = Color(15)
+        SendsA = Color(47)
+        SendsB = Color(13)
 
-        SendControls = Color(60)
-        VolumeControls = Color(62)
+        VolumeSendsA = Color(62)
+        VolumeSendsB = Color(62)
 
         DeviceControlOn = Color(15)
         DeviceControlOff = Color(13)
 
+        ToggleView = Color(15)
+        SwitchSendsButton = Color(15)
+
         CrossControl = Color(0)
         TempoControl = Color(0)
-        PrehearVolume = Color(47)
-        MasterVolume = Color(47)
-
-        ToggleView = Color(15)
-        SendsVolumesToggle = Color(15)
-
+        PrehearVolume = Color(60)
+        MasterVolume = Color(60)
 
         # Device mode
         TrackSelected = Color(60)
