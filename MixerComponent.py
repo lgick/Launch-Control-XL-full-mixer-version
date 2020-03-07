@@ -192,10 +192,10 @@ class MixerComponent(MixerComponentBase):
             button.color = 'Color.Off'
             button.set_control_element(None)
 
-        self.toggle_view_button.color = 'Color.Off'
-        self.toggle_view_button.set_control_element(None)
-        self.switch_sends_button.color = 'Color.Off'
-        self.switch_sends_button.set_control_element(None)
+        #self.toggle_view_button.color = 'Color.Off'
+        #self.toggle_view_button.set_control_element(None)
+        #self.switch_sends_button.color = 'Color.Off'
+        #self.switch_sends_button.set_control_element(None)
         self.master_select_button.color = 'Color.Off'
         self.master_select_button.set_control_element(None)
         self.tracks_activate_send_button.color = 'Color.Off'

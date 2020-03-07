@@ -155,8 +155,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             mixer_modes.add_mode('mode_1', [
              AddLayerMode(mixer, Layer(
-                 toggle_view_button=self._down_button,
-                 switch_sends_button=self._up_button,
                  track_select_buttons=self._state_buttons1,
                  send_select_buttons=self._state_buttons3,
                  master_select_button=self._button_16
@@ -171,17 +169,11 @@ class LaunchControlXL(IdentifiableControlSurface):
                  bank_next_button=self._button_12,
                  prev_device_button=self._button_15,
                  next_device_button=self._button_16
-                 )),
-             AddLayerMode(mixer, Layer(
-                 toggle_view_button=self._down_button,
-                 switch_sends_button=self._up_button
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
 
             mixer_modes.add_mode('mode_2', [
              AddLayerMode(mixer, Layer(
-                 toggle_view_button=self._down_button,
-                 switch_sends_button=self._up_button,
                  track_activate_send_buttons=self._state_buttons1,
                  tracks_activate_send_button=self._button_16
                  ))
@@ -189,8 +181,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             mixer_modes.add_mode('mode_3', [
              AddLayerMode(mixer, Layer(
-                 toggle_view_button=self._down_button,
-                 switch_sends_button=self._up_button,
                  mute_buttons=self._state_buttons1,
                  solo_buttons=self._state_buttons2
                  ))
@@ -198,8 +188,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             mixer_modes.add_mode('mode_3_detail', [
              AddLayerMode(mixer, Layer(
-                 toggle_view_button=self._down_button,
-                 switch_sends_button=self._up_button,
                  arm_buttons=self._state_buttons2
                  ))
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
@@ -345,6 +333,8 @@ class LaunchControlXL(IdentifiableControlSurface):
                 auto_name=True
                 )
         mixer.layer = Layer(
+                toggle_view_button=self._down_button,
+                switch_sends_button=self._up_button,
                 volume_controls=self._volume_faders,
                 send_controls_lights=self._send_controls_lights,
                 send_volumes_lights=self._send_volumes_lights,
