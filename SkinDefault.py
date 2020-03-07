@@ -37,8 +37,8 @@ class BiLedColors:
         ToggleView = Color(15)
         SwitchSendsButton = Color(15)
 
-        CrossControl = Color(0)
         TempoControl = Color(0)
+        CrossControl = Color(60)
         PrehearVolume = Color(60)
         MasterVolume = Color(60)
 
@@ -97,8 +97,8 @@ class BiLedColors:
 
 
         # Cross mode
-        CrossOn = Color(13)
-        CrossOff = Color(12)
+        CrossOn = Color(15)
+        CrossOff = Color(0)
 
 
 def make_biled_skin():

@@ -208,9 +208,9 @@ class LaunchControlXL(IdentifiableControlSurface):
                  mute_buttons=self._state_buttons1,
                  solo_buttons=self._state_buttons2
                  ))
-             ])
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3_detail')))
 
-            mixer_modes.add_mode('mode_4', [
+            mixer_modes.add_mode('mode_3_detail', [
              AddLayerMode(device, Layer(
                  parameter_controls=self._device_controls,
                  parameter_lights=self._device_controls_lights
@@ -218,7 +218,18 @@ class LaunchControlXL(IdentifiableControlSurface):
              AddLayerMode(mixer, Layer(
                  toggle_view_button=self._down_button,
                  switch_sends_button=self._up_button,
-                 arm_buttons=self._state_buttons1
+                 arm_buttons=self._state_buttons2
+                 ))
+             ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
+
+            mixer_modes.add_mode('mode_4', [
+             AddLayerMode(device, Layer(
+                 parameter_controls=self._device_controls,
+                 parameter_lights=self._device_controls_lights
+                 )),
+             AddLayerMode(mixer, Layer(
+                 crossfader_buttons_A=self._state_buttons1,
+                 crossfader_buttons_B=self._state_buttons2
                  ))
              ])
 
@@ -273,13 +284,13 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._left_button = make_button(106, 'Left')
         self._right_button = make_button(107, 'Right')
 
-        self._crossfader_control = make_encoder(53, 'Crossfader_Control')
-        self._tempo_control = make_encoder(54, 'Tempo_Control')
+        self._tempo_control = make_encoder(53, 'Tempo_Control')
+        self._crossfader_control = make_encoder(54, 'Crossfader_Control')
         self._prehear_volume_control = make_encoder(55, 'Prehear_Volume_Control')
         self._master_volume_control = make_encoder(56, 'Master_Volume_Control')
 
-        self._crossfader_control_light = make_button(79, 'Crossfader_Control_Light', MIDI_NOTE_TYPE)
-        self._tempo_control_light = make_button(95, 'Tempo_Control_Light', MIDI_NOTE_TYPE)
+        self._tempo_control_light = make_button(79, 'Tempo_Control_Light', MIDI_NOTE_TYPE)
+        self._crossfader_control_light = make_button(95, 'Crossfader_Control_Light', MIDI_NOTE_TYPE)
         self._prehear_volume_light = make_button(111, 'Prehear_Volume_Light', MIDI_NOTE_TYPE)
         self._master_volume_light = make_button(127, 'Master_Volume_Light', MIDI_NOTE_TYPE)
 
@@ -361,7 +372,7 @@ class LaunchControlXL(IdentifiableControlSurface):
                 master_volume_light=self._master_volume_light
                 )
 
-        #mixer.set_crossfader_control(self._crossfader_control)
+        mixer.set_crossfader_control(self._crossfader_control)
         mixer.set_prehear_volume_control(self._prehear_volume_control)
         mixer.master_strip().set_volume_control(self._master_volume_control)
 
