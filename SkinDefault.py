@@ -26,7 +26,7 @@ class BiLedColors:
 
         #controls
         SendsA = Color(47)
-        SendsB = Color(13)
+        SendsB = Color(47)
 
         VolumeSendsA = Color(62)
         VolumeSendsB = Color(62)
