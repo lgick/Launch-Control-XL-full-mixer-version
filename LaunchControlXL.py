@@ -154,10 +154,6 @@ class LaunchControlXL(IdentifiableControlSurface):
             #     ))
 
             mixer_modes.add_mode('mode_1', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
              AddLayerMode(mixer, Layer(
                  toggle_view_button=self._down_button,
                  switch_sends_button=self._up_button,
@@ -169,8 +165,6 @@ class LaunchControlXL(IdentifiableControlSurface):
 
             mixer_modes.add_mode('mode_1_detail', [
              AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights,
                  device_buttons=self._state_buttons1,
                  on_off_button=self._button_9,
                  bank_prev_button=self._button_11,
@@ -185,10 +179,6 @@ class LaunchControlXL(IdentifiableControlSurface):
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_1')))
 
             mixer_modes.add_mode('mode_2', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
              AddLayerMode(mixer, Layer(
                  toggle_view_button=self._down_button,
                  switch_sends_button=self._up_button,
@@ -198,10 +188,6 @@ class LaunchControlXL(IdentifiableControlSurface):
              ])
 
             mixer_modes.add_mode('mode_3', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
              AddLayerMode(mixer, Layer(
                  toggle_view_button=self._down_button,
                  switch_sends_button=self._up_button,
@@ -211,10 +197,6 @@ class LaunchControlXL(IdentifiableControlSurface):
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3_detail')))
 
             mixer_modes.add_mode('mode_3_detail', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
              AddLayerMode(mixer, Layer(
                  toggle_view_button=self._down_button,
                  switch_sends_button=self._up_button,
@@ -223,10 +205,6 @@ class LaunchControlXL(IdentifiableControlSurface):
              ], behaviour=ReenterBehaviour(on_reenter=partial(set_main_mode, 'mode_3')))
 
             mixer_modes.add_mode('mode_4', [
-             AddLayerMode(device, Layer(
-                 parameter_controls=self._device_controls,
-                 parameter_lights=self._device_controls_lights
-                 )),
              AddLayerMode(mixer, Layer(
                  crossfader_buttons_A=self._state_buttons1,
                  crossfader_buttons_B=self._state_buttons2
@@ -353,6 +331,10 @@ class LaunchControlXL(IdentifiableControlSurface):
 
     def _create_device(self):
         device = DeviceComponent(name='Device_Component', is_enabled=True, device_selection_follows_track_selection=True)
+        device.layer = Layer(
+                parameter_controls=self._device_controls,
+                parameter_lights=self._device_controls_lights
+                )
         return device
 
     def _create_mixer(self):
