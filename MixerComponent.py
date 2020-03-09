@@ -149,6 +149,7 @@ class MixerComponent(MixerComponentBase):
     send_volumes_lights = control_list(ButtonControl, control_count=6)
     send_controls_lights = control_list(ButtonControl, control_count=6)
     track_activate_send_buttons = control_list(ButtonControl, control_count=8)
+    empty_buttons = control_list(ButtonControl, control_count=7, color='Color.Off')
     track_activators = {}
     all_track_activators = False
     track_activators_list = []
