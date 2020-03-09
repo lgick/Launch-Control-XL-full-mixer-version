@@ -149,11 +149,10 @@ class MixerComponent(MixerComponentBase):
     send_volumes_lights = control_list(ButtonControl, control_count=6)
     send_controls_lights = control_list(ButtonControl, control_count=6)
     track_activate_send_buttons = control_list(ButtonControl, control_count=8)
-    empty_buttons = control_list(ButtonControl, control_count=7, color='Color.Off')
+    empty_button = ButtonControl(color='Color.Off')
     track_activators = {}
     all_track_activators = False
-    track_activators_list = []
-    one_send_active_track = False
+    count_activated_send_tracks = 0
 
     def __init__(self, send_volumes=None, *a, **k):
         self.send_volumes = send_volumes
@@ -266,27 +265,21 @@ class MixerComponent(MixerComponentBase):
         if strip._track in tracks:
             index = list(tracks).index(strip._track)
 
-            def get_track_activators_quanity():
-                count = 0
-                for index in self.track_activators:
-                    if self.track_activators[index] == True:
-                        count += 1
-
-                return count
-
-            if self.track_activators[index] == True and get_track_activators_quanity() == 1 and len(self.track_activators_list) == 0:
-                self.one_send_active_track = True
-            else:
-                self.one_send_active_track = False
-
-            if self.track_activators[index] != True or self.track_activators[index] == True and get_track_activators_quanity() > 0:
-                self.track_activators[index] = True
-                self.track_activators_list.append(index)
-
-            for index in self.track_activators:
-                if index not in self.track_activators_list:
+            if self.track_activators[index] == True:
+                if self.count_activated_send_tracks == 0:
+                    for i in self.track_activators:
+                        self.track_activators[i] = False
+                elif self.count_activated_send_tracks > 0:
                     self.track_activators[index] = False
+            else:
+                if self.count_activated_send_tracks == 0:
+                    for i in self.track_activators:
+                        self.track_activators[i] = False
+                    self.track_activators[index] = True
+                elif self.count_activated_send_tracks > 0:
+                    self.track_activators[index] = True
 
+            self.count_activated_send_tracks += 1
             self.update_sends()
 
     @track_activate_send_buttons.released
@@ -298,13 +291,7 @@ class MixerComponent(MixerComponentBase):
         if strip._track in tracks:
             index = list(tracks).index(strip._track)
 
-            if index in self.track_activators_list:
-                self.track_activators_list.remove(index)
-
-            if self.one_send_active_track == True:
-                self.one_send_active_track = False
-                self.track_activators[index] = False
-                self.update_sends()
+            self.count_activated_send_tracks -= 1
 
     @tracks_activate_send_button.pressed
     def tracks_activate_send_button(self, button):

@@ -61,9 +61,24 @@ class DeviceComponent(DeviceComponentBase):
 
     def update_device_buttons(self):
         track = self.song().view.selected_track
+        devices = track.devices
         device_to_select = track.view.selected_device
 
-        for button, device in izip_longest(self.device_buttons, track.devices):
+        if device_to_select:
+            if devices[0] == device_to_select:
+                self.prev_device_button.color = 'Color.ChangeDeviceOff'
+            else:
+                self.prev_device_button.color = 'Color.ChangeDeviceOn'
+
+            if devices[-1] == device_to_select:
+                self.next_device_button.color = 'Color.ChangeDeviceOff'
+            else:
+                self.next_device_button.color = 'Color.ChangeDeviceOn'
+        else:
+            self.prev_device_button.color = 'Color.ChangeDeviceOff'
+            self.next_device_button.color = 'Color.ChangeDeviceOff'
+
+        for button, device in izip_longest(self.device_buttons, devices):
             if button:
                 if device == None:
                     button.color = 'Color.Off'
@@ -76,12 +91,12 @@ class DeviceComponent(DeviceComponentBase):
     def set_prev_device_button(self, button):
         if button:
             self.prev_device_button.set_control_element(button)
-            self.prev_device_button.color = 'Color.PrevDevice'
+            self.update_device_buttons()
 
     def set_next_device_button(self, button):
         if button:
             self.next_device_button.set_control_element(button)
-            self.next_device_button.color = 'Color.NextDevice'
+            self.update_device_buttons()
 
     def set_bank_prev_button(self, button):
         if self._bank_down_button != None:

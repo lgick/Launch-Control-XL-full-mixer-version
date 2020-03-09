@@ -44,7 +44,7 @@ class BiLedColors:
 
         # Device mode
         TrackSelected = Color(60)
-        TrackUnselected = Color(29)
+        TrackUnselected = Color(62)
 
         SendSelected = Color(60)
         SendUnselected = Color(29)
@@ -55,8 +55,8 @@ class BiLedColors:
         DeviceOn = Color(15)
         DeviceOff = Color(13)
 
-        PrevDevice = Color(60)
-        NextDevice = Color(60)
+        ChangeDeviceOn = Color(60)
+        ChangeDeviceOff = Color(28)
 
         BankOn = Color(60)
         BankOff = Color(28)
@@ -64,9 +64,9 @@ class BiLedColors:
 
         # Mute mode
         SoloOn = Color(60)
-        SoloOff = Color(29)
+        SoloOff = Color(62)
 
-        MuteOn = Color(29)
+        MuteOn = Color(62)
         MuteOff = Color(60)
 
         MetronomeOn = Color(62)
