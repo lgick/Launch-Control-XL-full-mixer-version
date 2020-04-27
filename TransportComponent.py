@@ -79,10 +79,11 @@ class TransportComponent(TransportComponentBase):
             self.play_clip_button.color = 'Color.ClipPlay'
             self.toggle_view_button.color = 'Color.ToggleView'
 
-            if track.arm == True:
-                self.arm_button.color = 'Color.RecOn'
-            else:
-                self.arm_button.color = 'Color.RecOff'
+            if track.can_be_armed and track.arm:
+                if track.arm == True:
+                    self.arm_button.color = 'Color.RecOn'
+                else:
+                    self.arm_button.color = 'Color.RecOff'
         else:
             self.arm_button.color = 'Color.Off'
             self.delete_clip_button.color = 'Color.Off'
