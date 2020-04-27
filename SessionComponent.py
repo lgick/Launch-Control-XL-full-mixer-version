@@ -2,7 +2,7 @@
 # Python bytecode 2.7 (62211)
 # Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
 # [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control_XL/MixerComponent.py
+# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control_XL/SessionComponent.py
 # Compiled at: 2019-04-09 19:23:44
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
@@ -223,22 +223,3 @@ class SessionComponent(SessionComponentBase):
         if scene_offset != None:
             scenes = self.song().scenes
             self.song().view.selected_scene = scenes[scene_offset]
-
-    def _change_offsets(self, track_increment, scene_increment):
-        super(SessionComponent, self)._change_offsets(track_increment, scene_increment)
-        if track_increment != 0:
-            tracks = self.song().tracks
-            selected_track = self.song().view.selected_track
-            if selected_track in tracks:
-                index = list(tracks).index(selected_track)
-                track_len = self._track_offset + self.width()
-
-                if len(self.tracks_to_use()) < track_len:
-                    track_len = len(self.tracks_to_use())
-
-                if index < self._track_offset:
-                    clip = tracks[self._track_offset].clip_slots[self._scene_offset]
-                    self.song().view.highlighted_clip_slot = clip
-                elif index > track_len - 1:
-                    clip = tracks[track_len - 1].clip_slots[self._scene_offset]
-                    self.song().view.highlighted_clip_slot = clip
