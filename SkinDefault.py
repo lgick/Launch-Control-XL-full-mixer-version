@@ -25,17 +25,17 @@ class BiLedColors:
         #60 - green h
 
         #controls
-        SendsA = Color(47)
-        SendsB = Color(47)
+        SendsA = Color(13)
+        SendsB = Color(15)
 
-        VolumeSendsA = Color(62)
-        VolumeSendsB = Color(62)
+        SendControls = Color(62)
+        VolumeControls = Color(47)
 
         DeviceControlOn = Color(15)
         DeviceControlOff = Color(13)
 
         ToggleView = Color(15)
-        SwitchSendsButton = Color(15)
+        SendsVolumesToggle = Color(15)
 
         TempoControl = Color(0)
         CrossControl = Color(60)
