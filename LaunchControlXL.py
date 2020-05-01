@@ -325,12 +325,11 @@ class LaunchControlXL(IdentifiableControlSurface):
                 crossfader_control_light=self._crossfader_control_light,
                 tempo_control_light=self._tempo_control_light,
                 prehear_volume_light=self._prehear_volume_light,
-                master_volume_light=self._master_volume_light
+                master_volume_light=self._master_volume_light,
+                cf_control=self._crossfader_control,
+                prehear_control=self._prehear_volume_control,
+                master_control=self._master_volume_control
                 )
-
-        mixer.set_crossfader_control(self._crossfader_control)
-        mixer.set_prehear_volume_control(self._prehear_volume_control)
-        mixer.master_strip().set_volume_control(self._master_volume_control)
 
         for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
             channel_strip.empty_color = 'Color.Off'

@@ -37,10 +37,17 @@ class BiLedColors:
         ToggleView = Color(15)
         SendsVolumesToggle = Color(15)
 
-        TempoControl = Color(0)
-        CrossControl = Color(60)
-        PrehearVolume = Color(60)
-        MasterVolume = Color(60)
+        TempoControlOn = Color(0)
+        TempoControlOff = Color(0)
+
+        CrossControlOn = Color(60)
+        CrossControlOff = Color(28)
+
+        PrehearVolumeOn = Color(60)
+        PrehearVolumeOff = Color(28)
+
+        MasterVolumeOn = Color(60)
+        MasterVolumeOff = Color(28)
 
         # Device mode
         TrackSelected = Color(60)

@@ -148,6 +148,9 @@ class MixerComponent(MixerComponentBase):
     tempo_control_light = ButtonControl()
     prehear_volume_light = ButtonControl()
     master_volume_light = ButtonControl()
+    cf_control = None
+    prehear_control = None
+    master_control = None
     sends_mode = 'A'
     controls_mode = 'send'
     switch_sends_button = ButtonControl()
@@ -294,15 +297,42 @@ class MixerComponent(MixerComponentBase):
                     self.send_controls[i].release_parameter()
             self.update_sends()
 
+    def enable_volumes(self):
+        master_track = self.song().master_track
+
+        if self.is_enabled():
+            if self.cf_control != None:
+                self.crossfader_control_light.color = "Color.CrossControlOn"
+                self.cf_control.connect_to(master_track.mixer_device.crossfader)
+            if self.prehear_control != None:
+                self.prehear_volume_light.color = "Color.PrehearVolumeOn"
+                self.prehear_control.connect_to(master_track.mixer_device.cue_volume)
+            if self.master_control != None:
+                self.master_volume_light.color = "Color.MasterVolumeOn"
+                self.master_control.connect_to(master_track.mixer_device.volume)
+
+    def disable_volumes(self):
+        if self.cf_control != None:
+            self.crossfader_control_light.color = "Color.CrossControlOff"
+            self.cf_control.release_parameter()
+        if self.prehear_control != None:
+            self.prehear_volume_light.color = "Color.PrehearVolumeOff"
+            self.prehear_control.release_parameter()
+        if self.master_control != None:
+            self.master_volume_light.color = "Color.MasterVolumeOff"
+            self.master_control.release_parameter()
+
     @sends_volumes_toggle_button.pressed_delayed
     def sends_volumes_toggle_button(self, button):
         self.controls_mode = 'volume'
         self.update_controls_mode()
+        self.enable_volumes()
 
     @sends_volumes_toggle_button.released_delayed
     def sends_volumes_toggle_button(self, button):
         self.controls_mode = 'send'
         self.update_controls_mode()
+        self.disable_volumes()
 
     @toggle_view_button.pressed
     def toggle_view_button(self, button):
@@ -558,26 +588,38 @@ class MixerComponent(MixerComponentBase):
     def set_crossfader_control_light(self, button):
         if button:
             self.crossfader_control_light.set_control_element(button)
-            self.crossfader_control_light.color = "Color.CrossControl"
+            self.crossfader_control_light.color = "Color.CrossControlOff"
             self.crossfader_control_light.enabled = True
 
     def set_tempo_control_light(self, button):
         if button:
             self.tempo_control_light.set_control_element(button)
-            self.tempo_control_light.color = "Color.TempoControl"
+            self.tempo_control_light.color = "Color.TempoControlOff"
             self.tempo_control_light.enabled = True
 
     def set_prehear_volume_light(self, button):
         if button:
             self.prehear_volume_light.set_control_element(button)
-            self.prehear_volume_light.color = "Color.PrehearVolume"
+            self.prehear_volume_light.color = "Color.PrehearVolumeOff"
             self.prehear_volume_light.enabled = True
 
     def set_master_volume_light(self, button):
         if button:
             self.master_volume_light.set_control_element(button)
-            self.master_volume_light.color = "Color.MasterVolume"
+            self.master_volume_light.color = "Color.MasterVolumeOff"
             self.master_volume_light.enabled = True
+
+    def set_cf_control(self, control):
+        if control:
+            self.cf_control = control
+
+    def set_prehear_control(self, control):
+        if control:
+            self.prehear_control = control
+
+    def set_master_control(self, control):
+        if control:
+            self.master_control = control
 
     def set_sends_volumes_toggle_button(self, button):
         if button:
