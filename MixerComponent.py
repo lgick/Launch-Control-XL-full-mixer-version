@@ -26,7 +26,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._crossfade_toggle_A = None
         self._crossfade_toggle_B = None
-        self._sends_mode = 'A'
         self._controls = [
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[0], Live.MidiMap.MapMode.absolute),
                 EncoderElement(MIDI_CC_TYPE, 8, SEND_CONTROLS[1], Live.MidiMap.MapMode.absolute),
@@ -104,11 +103,10 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
     def sends_on(self, mode):
         if liveobj_valid(self._track):
-            self._sends_mode = mode
             count = 0
 
-            if mode == 'B':
-                count = 6
+            #if mode == 'B':
+            #    count = 6
 
             for control in self._controls:
                 if count < len(self._track.mixer_device.sends):
